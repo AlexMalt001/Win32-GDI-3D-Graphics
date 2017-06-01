@@ -12,6 +12,8 @@ class screen {
 		screen(int width, int height, HWND hwnd);
 		void refresh();
 		void drawPx(int x, int y, DWORD colour);
+		int getHeight();
+		int getWidth();
 	private:
 		int width, height;
 		DWORD* pixArray;

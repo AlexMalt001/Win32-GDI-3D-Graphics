@@ -1,6 +1,9 @@
 ﻿#include <Windows.h>
 #include <stdlib.h>
 #include "WindowManagement.h"
+#include "3DComponents.h"
+#include "Base3D.h"
+
 
 const int tester = 2;
 
@@ -23,19 +26,13 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	
 	screen sc(512, 512, hwnd);
-	MessageBox(hwnd, L"💗 ", L"tesg", NULL);
-	int i = 0;
-	int j = 0;
-	while (i < 512) {
-		j = 0;
-		while (j < 512) {
-			sc.drawPx(i, j, 0x0000FF00);
-			j++;
-		}
-		i++;
+	
+
+	World mainWorld;
+
+	while (1 != 0) {
+		mainWorld.draw(sc);
 	}
-	MessageBox(hwnd, L"💗 ", L"tesg", NULL);
-	sc.refresh();
 
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
 	{

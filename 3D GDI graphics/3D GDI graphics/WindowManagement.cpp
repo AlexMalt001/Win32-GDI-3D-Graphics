@@ -99,3 +99,11 @@ void screen::drawPx(int x, int y, DWORD colour) {
 void screen::refresh() {
 	BitBlt(screenHDC, 0, 0, 512, 512, picHDC, 0, 0, SRCCOPY);
 }
+
+int screen::getHeight() {
+	return height;
+}
+
+int screen::getWidth() {
+	return width;
+}

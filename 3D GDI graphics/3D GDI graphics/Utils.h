@@ -16,3 +16,16 @@ class angle {
 		float angleDegs;
 		float angleRads; //done between 0-2, not between 0-2PI, cause its nicer
 };
+
+class vec3 {
+public:
+	float x;
+	float y;
+	float z;
+	float xRot;
+	float yRot;
+	float zRot;
+	vec3(float x, float y, float z);
+	vec3 operator+(vec3 &other);
+	vec3();
+};
