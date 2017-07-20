@@ -7,15 +7,16 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-
+using namespace utils;
 using namespace std;
 
 class Point {
 public:
 	Point() {};
 	float coOrds[ThreeDVertDims];
-	float rotation[ThreeDVertDims];
+	angle rotation[ThreeDVertDims];
 	Point(float x, float y, float z);
+	Point(float x, float y, float z, angle xRot, angle yRot, angle zRot);
 	void transform(vec3 transformVector);
 	void refresh(Point globalPoint);
 
@@ -24,19 +25,24 @@ public:
 class CoOrdinateSystem {
 	public:
 		int Id;
+		Point origin;
 };
 
 class childCoOrdSys : public CoOrdinateSystem{
 	public:
 		CoOrdinateSystem parent;
-		Point origin;
 		childCoOrdSys(CoOrdinateSystem parent, Point origin);
 		childCoOrdSys();
 };
 
 class CoOrdSysManager {
-	vector <CoOrdinateSystem> systems;
-	CoOrdinateSystem globalCoOrdinateSystem;
+	public:
+		int newCoOrdSys(Point origin);
+		//TODO: 'updateSys(Id);
+		void removeCoOrdSys(int Id);
+		vector<int> clearSpots; 
+		vector <CoOrdinateSystem> systems;
+		CoOrdinateSystem globalCoOrdinateSystem;
 };
 
 class UniversalPoint {
@@ -46,7 +52,7 @@ public:
 	Point globalPoint;
 	void transform(vec3 transformVector);
 	UniversalPoint() {};
-	UniversalPoint(Point _globalPoint);
+	UniversalPoint(Point _globalPoint, CoOrdSysManager coOrdManager);
 	Point getPoint(int Id);
 };
 
@@ -56,8 +62,10 @@ public:
 	UniversalPoint origin;
 	float distance;
 	angle fov;
-	void calculateDistance();
+	void calculateDistance(screen& sc);
 	int Id;
+
+	//TODO: constructors only for World
 	camera(UniversalPoint origin, angle fov);
 	camera();
 };
@@ -79,6 +87,9 @@ class Object3D {
 
 class World : public CoOrdSysManager {
 public:
+	UniversalPoint createPoint(float x,float y, float  z);
+	UniversalPoint createPoint(Point point);
+	//TODO: 'createCamera();
 	vector<camera> cameras;
 	vector<Object3D> objects;
 	camera activeCamera;

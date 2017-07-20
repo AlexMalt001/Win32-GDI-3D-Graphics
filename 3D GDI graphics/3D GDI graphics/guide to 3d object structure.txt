@@ -1,0 +1,62 @@
+###############################################
+#     DOCUMENTATION OF ALEX'S 3D RENDERER     #
+#           --3D class structure--            #
+#                                             #
+#   all variables used in code snippets are   #
+#   typecast for ease of understanding, this  #
+#   is not intended to demonstrate correct    # 
+#   practice when programming                 #
+#                                             #
+###############################################
+
+
+GEOMETRIC REPRESENTATION
+
+    Details on how geometric constructs are represented in this engine.
+
+    3D Objects are represented within (several[see co-ordinate systems]) 3 dimensional Cartesian grids. 
+
+    Representation of objects in 3d space [co-ordinate system diagram]:
+
+    Y         x----x  
+    |   Z    /|   /|       'x' represents a class(Point)
+    |   /   x-x--x x
+    |  /    |/   |/
+    | /     x----x
+    |/________________ X
+    Origin
+
+    DETAILS:
+        class(Point):
+            CONTENTS:
+                float[](coOrds);  3 slot array of co-ords. [x,y,z]
+
+                float[](rotation): 3 slot array of rotation. [x,y,z]
+                    UNDER REVIEW - may not be useful
+
+CO-ORDINATE SYSTEMS
+    
+    An understanding of the points described in '3D Class Structure -> Geometric Representation' is expected
+
+    This engine operates under a number of co-ordinate systems. The operation of these systems is detailed below:
+
+    USAGE:
+        to get a Point(object) in a certain co-ord system from a UniversalPoint:
+            UniversalPoint(object).getPoint(int(CoOrdSysId));
+
+            see below for details on co-ordinate system Ids, UniversalObjects and Points
+
+
+    DETAILS:
+        The 'Base co-ord system':
+            Stored as a variable contained by class(CoOrdSysManager), this is the co-ordinate system from which all other co-ordinate systems are derived.
+
+            CONTENTS:
+                int(Id) the 'Id' of the co-ordinate system
+
+        'Child Co-Ordinate Systems':
+            These are co-ordinate systems that are derived from other co-ordinate systems (often the 'Base co-ordinate system', however not always). When changed or initialised
+
+
+        class(CoOrdinateSystem):
+            Used ONCE(per World) to initialise the global co-ord system(the base one)
