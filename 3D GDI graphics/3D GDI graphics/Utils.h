@@ -1,8 +1,23 @@
 #pragma once
 #include <sstream>
+#include<Windows.h>
+#include <typeinfo>
 using namespace std;
 
 namespace utils {
+	
+	template<class T> 
+	static void println(T output) {
+		wstring x = (to_wstring(output)) + L"\n";
+		OutputDebugStringW(x.c_str());
+	}
+
+	//specialisation for wstring, doesnt need to be 'to_wstring'ed
+	template<> 
+	static void println <wstring> (wstring output) {
+		OutputDebugStringW((output + L"\n").c_str());
+	}
+
 	class angle {
 		public:
 			float getRadsExact();
