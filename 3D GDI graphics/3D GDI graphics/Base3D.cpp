@@ -157,13 +157,15 @@ void World::draw(screen sc) {
 
 			if (!visible) { //if one vertex of the face has been found to be visible, at least some part of the face is visible, therefore the other points dont need to be checked
 
+				
 				//find polar co-ordinate style angles for each point
-				angle wTheta = angle(true, visibleFaces[i].verts[j].children[cameraId].coOrds[0] / visibleFaces[i].verts[j].children[cameraId].coOrds[2]);
-				angle hTheta = angle(true, visibleFaces[i].verts[j].children[cameraId].coOrds[1] / visibleFaces[i].verts[j].children[cameraId].coOrds[2]);
+				angle xyTheta = angle(true, atan(visibleFaces[i].verts[j].children[cameraId].coOrds[1] / visibleFaces[i].verts[j].children[cameraId].coOrds[0])/M_2_PI);
+				angle xzTheta = angle(true, atan(visibleFaces[i].verts[j].children[cameraId].coOrds[2] / visibleFaces[i].verts[j].children[cameraId].coOrds[0])/M_2_PI);
+				
 
 				//check if polar co-ordinates of the point are (not) within the fov of the camera
-				if ((2 - (activeCamera.fov.getRads() / 2)) > wTheta.getRads() > activeCamera.fov.getRads() / 2 &&
-					((2 - atan((sc.getHeight() / 2) / activeCamera.distance)) > hTheta.getRads() > activeCamera.fov.getRads() / 2)) {
+				if ((activeCamera.fov.getRads() / 2)*(-1) > xzTheta.getRads() > activeCamera.fov.getRads() / 2 &&
+					(atan(activeCamera.distance / sc.getHeight()))*(-1) > xyTheta.getRads() > atan(activeCamera.distance / sc.getHeight())) {
 				}
 				else { //if they are (ie not not) then a part of the face is definitely visible
 					visible = true;
