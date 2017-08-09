@@ -2,21 +2,42 @@
 #include <sstream>
 #include<Windows.h>
 #include <typeinfo>
+#include <atlstr.h>  
+#include <sstream>
+#include <codecvt>
 using namespace std;
 
 namespace utils {
 	
-	template<class T> 
-	static void println(T output) {
+	template<class T>
+	static void println(T output, std::true_type) { //numeric
 		wstring x = (to_wstring(output)) + L"\n";
 		OutputDebugStringW(x.c_str());
 	}
 
-	//specialisation for wstring, doesnt need to be 'to_wstring'ed
-	template<> 
-	static void println <wstring> (wstring output) {
-		OutputDebugStringW((output + L"\n").c_str());
+	template<class T>
+	static void println(T output, std::false_type) { //numeric
+		println("no \'println\' function for this data type");
+		throw 0;
 	}
+
+	static void println (string output, false_type) { //non-numeric
+		/*basic_string<wchar_t> test = output;
+		OutputDebugStringW(test);*/
+		std::wstring_convert<codecvt_utf8_utf16<wchar_t>> converter;
+		wstring finalForm = converter.from_bytes(output);
+		OutputDebugStringW(finalForm.c_str());
+	}
+
+	static void println(wstring output, false_type) { //non-numeric
+		OutputDebugStringW(output.c_str());
+	}
+
+	template<class T>
+	static void println(T output) {
+		println(output, std::is_arithmetic<T>{});
+	}
+
 
 	class angle {
 		public:
