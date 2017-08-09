@@ -238,12 +238,40 @@ Face::Face(vector<UniversalPoint> _verts) {
 Point UniversalPoint::getPoint(int Id) {
 	CoOrdinateSystem target = coOrdManager.systems[Id];
 	Point origin = target.origin;
-	Point finalPoint = Point(globalPoint.coOrds[0] - origin.coOrds[0], globalPoint.coOrds[1] - origin.coOrds[1], globalPoint.coOrds[2] - origin.coOrds[2]); 
+	Point workingPoint = Point(globalPoint.coOrds[0] - origin.coOrds[0], globalPoint.coOrds[1] - origin.coOrds[1], globalPoint.coOrds[2] - origin.coOrds[2]); 
+
+
+	//rotation
+
+	//z-axis
+	//transformations done on a plane perpendicular to the z-axis
+	angle startYtoPt = angle(true, (atan(workingPoint.coOrds[0]/workingPoint.coOrds[1]))/M_2_PI);//the original angle between the Y-axis and the line between the origin of the co-ord system and the point
+	angle endYtoPt = angle(true, startYtoPt.getRads() + (origin.rotation[2].getRads()));
+	float radius = sqrt(pow(workingPoint.coOrds[0],2) + pow(workingPoint.coOrds[1],2));
+	workingPoint.coOrds[1] = (cos(endYtoPt.getRadsExact()))*radius;
+	workingPoint.coOrds[0] = sqrt(pow(radius, 2) - pow(workingPoint.coOrds[1], 2));
+	
+
+	//x-axis
+	//transformations done on a plane perpendicular to the z-axis
+	angle startZtoPt = angle(true, (atan(workingPoint.coOrds[3] / workingPoint.coOrds[2])) / M_2_PI);
+	angle endZtoPt = angle(true, startZtoPt.getRads() + (origin.rotation[0].getRads()));
+	radius = sqrt(pow(workingPoint.coOrds[3], 2) + pow(workingPoint.coOrds[2], 2));
+	workingPoint.coOrds[1] = (cos(endZtoPt.getRadsExact()))*radius;
+	workingPoint.coOrds[2] = sqrt(pow( radius, 2) - pow(workingPoint.coOrds[1], 2));
+
+	//y-axis
+	angle startXtoPt = angle(true, (atan(workingPoint.coOrds[0] / workingPoint.coOrds[3])) / M_2_PI);
+	angle endXtoPt = angle(true, startXtoPt.getRads() + (origin.rotation[1].getRads()));
+	radius = sqrt(pow(workingPoint.coOrds[0], 2) + pow(workingPoint.coOrds[2], 2));
+	workingPoint.coOrds[2] = (cos(endXtoPt.getRadsExact()))*radius;
+	workingPoint.coOrds[0] = sqrt(pow(radius, 2) - pow(workingPoint.coOrds[1], 2));
+
 	if (children.size() - 1 > Id) {
 		children.resize(Id+1);
 	}
-	children[Id] = finalPoint;
-	return finalPoint;
+	children[Id] = workingPoint;
+	return workingPoint;
 }
 
 int CoOrdSysManager::newCoOrdSys(Point origin)
