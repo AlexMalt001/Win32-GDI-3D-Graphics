@@ -48,12 +48,13 @@ class CoOrdSysManager {
 class UniversalPoint {
 public:
 	CoOrdSysManager coOrdManager;
-	vector<Point> children;
 	Point globalPoint;
 	void transform(vec3 transformVector);
 	UniversalPoint() {};
 	UniversalPoint(Point _globalPoint, CoOrdSysManager coOrdManager);
 	Point getPoint(int Id);
+private:
+	vector<Point> children;
 };
 
 class camera {

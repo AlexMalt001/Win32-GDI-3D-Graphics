@@ -159,8 +159,8 @@ void World::draw(screen sc) {
 
 				
 				//find polar co-ordinate style angles for each point
-				angle xyTheta = angle(true, atan(visibleFaces[i].verts[j].children[cameraId].coOrds[1] / visibleFaces[i].verts[j].children[cameraId].coOrds[0])/M_2_PI);
-				angle xzTheta = angle(true, atan(visibleFaces[i].verts[j].children[cameraId].coOrds[2] / visibleFaces[i].verts[j].children[cameraId].coOrds[0])/M_2_PI);
+				angle xyTheta = angle(true, atan(visibleFaces[i].verts[j].getPoint(cameraId).coOrds[1] / visibleFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
+				angle xzTheta = angle(true, atan(visibleFaces[i].verts[j].getPoint(cameraId).coOrds[2] / visibleFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
 				
 
 				//check if polar co-ordinates of the point are (not) within the fov of the camera
