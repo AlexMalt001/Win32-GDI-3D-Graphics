@@ -37,17 +37,18 @@ class childCoOrdSys : public CoOrdinateSystem{
 
 class CoOrdSysManager {
 	public:
+		CoOrdSysManager();
 		int newCoOrdSys(Point origin);
 		//TODO: 'updateSys(Id);
 		void removeCoOrdSys(int Id);
 		vector<int> clearSpots; 
 		vector <CoOrdinateSystem> systems;
-		CoOrdinateSystem globalCoOrdinateSystem;
+		CoOrdinateSystem *globalCoOrdinateSystem;
 };
 
 class UniversalPoint {
 public:
-	CoOrdSysManager coOrdManager;
+	CoOrdSysManager *coOrdManager;
 	Point globalPoint;
 	void transform(vec3 transformVector);
 	UniversalPoint() {};
@@ -59,7 +60,7 @@ private:
 
 class camera {
 public:
-	childCoOrdSys cameraCoOrdSys;
+	//childCoOrdSys cameraCoOrdSys;
 	UniversalPoint origin;
 	float distance;
 	angle fov;
@@ -93,7 +94,7 @@ public:
 	//TODO: 'createCamera();
 	vector<camera> cameras;
 	vector<Object3D> objects;
-	camera activeCamera;
+	camera *activeCamera;
 	int latestCoOrdId;
 	void draw(screen sc);
 	World();

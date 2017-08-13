@@ -3,6 +3,7 @@
 #include "WindowManagement.h"
 #include "3DComponents.h"
 #include "Base3D.h"
+#include "Utils.h"
 
 
 const int tester = 2;
@@ -31,8 +32,10 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	World mainWorld;
 
 	camera mainCamera(mainWorld.createPoint(0,0,0),angle(false, 90));
+	mainCamera.calculateDistance(sc);
 	mainWorld.cameras.push_back(mainCamera);
-	mainWorld.activeCamera = (mainWorld.cameras[mainWorld.cameras.size()-1]);
+	mainWorld.activeCamera = &(mainWorld.cameras[mainWorld.cameras.size()-1]);
+
 
 	Point p1 = Point(0,0,100);
 	Point p2 = Point(30, 0, 100);

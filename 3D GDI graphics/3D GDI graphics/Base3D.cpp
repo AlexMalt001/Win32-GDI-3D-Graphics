@@ -20,7 +20,17 @@ void camera::calculateDistance(screen& sc) {
 	distance = height / tan(angle);
 }
 
-camera::camera(UniversalPoint origin, angle fov) {
+CoOrdSysManager::CoOrdSysManager() {
+	systems.push_back(CoOrdinateSystem());
+	systems[0].Id = 0;
+	globalCoOrdinateSystem = &(systems[0]);
+}
+
+camera::camera(UniversalPoint _origin, angle _fov) {
+	origin = _origin;
+	fov = _fov;
+	int test = (*origin.coOrdManager).newCoOrdSys(origin.globalPoint);
+	Id = test;
 }
 
 camera::camera() {
@@ -34,7 +44,7 @@ void UniversalPoint::transform(vec3 transformVector) {
 }
 
 UniversalPoint::UniversalPoint(Point _globalPoint, CoOrdSysManager _coOrdManager) {
-	coOrdManager = _coOrdManager;
+	coOrdManager = &_coOrdManager;
 	globalPoint = _globalPoint;
 
 }
@@ -123,23 +133,25 @@ void World::draw(screen sc) {
 	vector<Face> improvedFaces; //vector that will contain the newly broken down face
 	i = 0;
 	while (i < faces.size()) { //for every face
-		if (faces[i].verts.size() > 3) { //face only needs to be processed if it is not already a tri
+		if (faces[i].verts.size() > 2) { //face only needs to be processed if it is not already a tri
 			Face face = faces[i]; //reference to current face. readability.
 			UniversalPoint firstVert = faces[i].verts[0]; //first vertex of the current face. for readability
-			for (int j = 0; j < (faces[i].verts.size()) - 2, j++;) { //number of tris in a poly = number of verts-2
+			int j = 0;
+			while(j < face.verts.size()-2) { //number of tris in a poly = number of verts-2
 
 				//variables for the second and third verts of the new tri
 				UniversalPoint secondVert = faces[i].verts[j + 1];
 				UniversalPoint thirdVert = faces[i].verts[j + 2];
 
 				//create a vector of points, then push each of the chosen vertices to it
-				vector<UniversalPoint> points;
-				points.push_back(firstVert);
-				points.push_back(secondVert);
-				points.push_back(thirdVert);
+				vector<UniversalPoint> points(3);
+				points[0] = (firstVert);
+				points[1] = (secondVert);
+				points[2] = (thirdVert);
 
 				//create a new face from the point vector, then add it to the vector of processed faces
 				improvedFaces.push_back(Face(points));
+				j++;
 			}
 		}
 		else {
@@ -147,58 +159,67 @@ void World::draw(screen sc) {
 		}
 		i = i + 1;
 	}
-	//VISIBILITY CHECKING CODE (low processing cost check to see if the face is in the viewport
-	int cameraId = activeCamera.cameraCoOrdSys.Id;
-	vector<Face> visibleFaces; //a vector that will contain all faces that can be seen by the camera
-	for (int i = 0; i < improvedFaces.size(), i++;) { //for every face
-		bool visible = false; //a variable that will be changed to determine whether or not part of the face is visible
 
-		for (int j = 0; j < visibleFaces[i].verts.size(), j++;) { //for every vertex of the face
+
+	//VISIBILITY CHECKING CODE (low processing cost check to see if the face is in the viewport
+	int cameraId = (*activeCamera).Id;
+	vector<Face> visibleFaces; //a vector that will contain all faces that can be seen by the camera
+	for (int i = 0; i < improvedFaces.size(), i = i+1;) { //for every face
+		bool visible = false; //a variable that will be changed to determine whether or not part of the face is visible
+		int j = 0;
+		while(j < improvedFaces[i-1].verts.size()) { //for every vertex of the face
 
 			if (!visible) { //if one vertex of the face has been found to be visible, at least some part of the face is visible, therefore the other points dont need to be checked
 
 				
 				//find polar co-ordinate style angles for each point
-				angle xyTheta = angle(true, atan(visibleFaces[i].verts[j].getPoint(cameraId).coOrds[1] / visibleFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
-				angle xzTheta = angle(true, atan(visibleFaces[i].verts[j].getPoint(cameraId).coOrds[2] / visibleFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
+				angle xyTheta = angle(true, atan(improvedFaces[i-1].verts[j].getPoint(cameraId).coOrds[1] / improvedFaces[i-1].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
+				angle xzTheta = angle(true, atan(improvedFaces[i-1].verts[j].getPoint(cameraId).coOrds[2] / improvedFaces[i-1].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
 				
 
 				//check if polar co-ordinates of the point are (not) within the fov of the camera
-				if ((activeCamera.fov.getRads() / 2)*(-1) > xzTheta.getRads() > activeCamera.fov.getRads() / 2 &&
-					(atan(activeCamera.distance / sc.getHeight()))*(-1) > xyTheta.getRads() > atan(activeCamera.distance / sc.getHeight())) {
+				if (((*activeCamera).fov.getRads() / 2)*(-1) > xzTheta.getRads() > (*activeCamera).fov.getRads() / 2 &&
+					(atan((*activeCamera).distance / sc.getHeight()))*(-1) > xyTheta.getRads() > atan((*activeCamera).distance / sc.getHeight())) {
 				}
 				else { //if they are (ie not not) then a part of the face is definitely visible
 					visible = true;
 				}
 			}
+			j++;
 		}
-
 		if (visible) {
 			
 			//if the face is visible, add the face to a list of visible faces
 			visibleFaces.push_back(improvedFaces[i]);
 		}
 	}
-
-
-	for (int i = 0; i < improvedFaces.size(), i++;) {
-		Face workingFace = improvedFaces[i];
-		Point facePoints[2];
+	i = 0;
+	while( i < visibleFaces.size()) {
+		Face workingFace = visibleFaces[i];
+		vector<Point> facePoints(2);
 		float worldXs[2], worldYs[2], worldZs[2];
-		for (int j = 0; j < 2, j++;) {
+		int j = 0;
+		while( j < 2) {
+			println(workingFace.verts.size());
+			println(j);
 			facePoints[j] = workingFace.verts[j].getPoint(cameraId);
 			worldXs[j] = facePoints[j].coOrds[0];
 			worldYs[j] = facePoints[j].coOrds[1];
 			worldZs[j] = facePoints[j].coOrds[2];
+			j++;
 		}
-
+		
 		int screenXs[2];
 		int screenYs[2];
-		for (int j = 0; j < 2, j++;) {
+		j = 0;
+		while(j < 2) {
 			//X
-			screenXs[j] = activeCamera.distance*(worldXs[j] / worldZs[j]);
+			screenXs[j] = float((*activeCamera).distance*(worldXs[j] / worldZs[j]));
 			//Y
-			screenYs[j] = activeCamera.distance*(worldYs[j] / worldZs[j]);
+			screenYs[j] = float((*activeCamera).distance*(worldYs[j] / worldZs[j]));
+			//println(worldXs[j]);
+			//println(worldYs[j]);
+			j++;
 		}
 
 		//POINT0->POINT1
@@ -221,7 +242,7 @@ void World::draw(screen sc) {
 			sc.drawPx(j,j*(deltaY/deltaX),0xFFFFFF);
 		}
 
-
+		i++;
 	}
 
 	sc.refresh(); //copy the working bitmap to the actual screen
@@ -235,8 +256,8 @@ Face::Face(vector<UniversalPoint> _verts) {
 }
 
 
-Point UniversalPoint::getPoint(int Id) {
-	CoOrdinateSystem target = coOrdManager.systems[Id];
+Point UniversalPoint::getPoint(int _Id) {
+	CoOrdinateSystem target = (*coOrdManager).systems[_Id];
 	Point origin = target.origin;
 	Point workingPoint = Point(globalPoint.coOrds[0] - origin.coOrds[0], globalPoint.coOrds[1] - origin.coOrds[1], globalPoint.coOrds[2] - origin.coOrds[2]); 
 
@@ -267,10 +288,10 @@ Point UniversalPoint::getPoint(int Id) {
 	workingPoint.coOrds[2] = (cos(endXtoPt.getRadsExact()))*radius;
 	workingPoint.coOrds[0] = sqrt(pow(radius, 2) - pow(workingPoint.coOrds[1], 2));
 
-	if (children.size() - 1 > Id) {
-		children.resize(Id+1);
+	if (children.size() - 1 > _Id) {
+		children.resize(_Id+1);
 	}
-	children[Id] = workingPoint;
+	children[_Id] = workingPoint;
 	return workingPoint;
 }
 
@@ -279,10 +300,11 @@ int CoOrdSysManager::newCoOrdSys(Point origin)
 	int Id;
 	if (clearSpots.size() != 0) {
 		Id = clearSpots[0];
+		systems[Id] = childCoOrdSys((*globalCoOrdinateSystem), origin);
 	} else {
 		Id = systems.size();
+		systems.push_back(childCoOrdSys((*globalCoOrdinateSystem), origin));
 	}
-	systems[Id] = childCoOrdSys(globalCoOrdinateSystem, origin);
 	return Id;
 }
 
