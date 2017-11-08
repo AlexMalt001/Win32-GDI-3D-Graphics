@@ -222,7 +222,7 @@ void World::draw(screen sc) {
 
 			j++;
 		}
-
+		
 		//POINT0->POINT1
 		// ReSharper disable CppInconsistentNaming
 		int lowerXX;
