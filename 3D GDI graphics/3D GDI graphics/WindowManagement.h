@@ -12,13 +12,11 @@ class screen {
 		screen(int width, int height, HWND hwnd);
 		void refresh();
 		void drawPx(int x, int y, DWORD colour);
-		int getHeight();
-		int getWidth();
+		int getHeight() const;
+		int getWidth() const;
 	private:
 		int width, height;
 		DWORD* pixArray;
 		HDC screenHDC;
 		HDC picHDC;
-		HBITMAP bmp;
-		HBITMAP bmpold;
 };

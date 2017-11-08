@@ -1,11 +1,11 @@
 #include <Windows.h>
 #include <stdlib.h>
-#include <iostream>
 #include "WindowManagement.h"
 
 
 const LPCWCHAR g_szClassName = L"myWindowClass"; //name of window class - 'sz' = string, zero terminated
 
+// ReSharper disable once CppInconsistentNaming
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	switch (msg) {
@@ -21,7 +21,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		break;
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
-		break;
 	}
 	return 0;
 }
@@ -37,7 +36,7 @@ WNDCLASSEX& createWindowClass(HINSTANCE hinstance) {
 	windowClass.hInstance = hinstance;
 	windowClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	windowClass.hbrBackground = (HBRUSH)COLOR_WINDOW; //sets colour of window to default
+	windowClass.hbrBackground = HBRUSH(COLOR_WINDOW); //sets colour of window to default
 	windowClass.lpszMenuName = NULL;
 	windowClass.lpszClassName = g_szClassName;
 	windowClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
@@ -51,8 +50,7 @@ WNDCLASSEX& createWindowClass(HINSTANCE hinstance) {
 
 //TODO: Create window objects with OOP
 HWND getHwnd(HINSTANCE hinstance) {
-	HWND hwnd;
-	hwnd = CreateWindowEx(
+	HWND hwnd = CreateWindowEx(
 		WS_EX_CLIENTEDGE,
 		g_szClassName,
 		L"MaltFXv1",
@@ -87,23 +85,26 @@ screen::screen(int _width, int _height, HWND hwnd) {
 	bitmapinfo.bmiHeader.biBitCount = 32;
 	bitmapinfo.bmiHeader.biCompression = BI_RGB;
 
+	// ReSharper disable once CppCStyleCast
 	HBITMAP bmp = CreateDIBSection(picHDC, &bitmapinfo, DIB_RGB_COLORS, (VOID**)&pixArray, 0, 0);
 
-	HBITMAP bmpold = (HBITMAP)SelectObject(picHDC, bmp);
+	HBITMAP bmpold = (HBITMAP(SelectObject(picHDC, bmp)));
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void screen::drawPx(int x, int y, DWORD colour) {
 	pixArray[(y*width) + x] = colour;
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void screen::refresh() {
 	BitBlt(screenHDC, 0, 0, 512, 512, picHDC, 0, 0, SRCCOPY);
 }
 
-int screen::getHeight() {
+int screen::getHeight() const {
 	return height;
 }
 
-int screen::getWidth() {
+int screen::getWidth() const {
 	return width;
 }

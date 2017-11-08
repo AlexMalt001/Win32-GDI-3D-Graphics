@@ -1,8 +1,6 @@
 #pragma once
 #include <sstream>
 #include<Windows.h>
-#include <typeinfo>
-#include <atlstr.h>  
 #include <sstream>
 #include <codecvt>
 using namespace std;
@@ -10,18 +8,18 @@ using namespace std;
 namespace utils {
 	
 	template<class T>
-	static void println(T output, std::true_type) { //numeric
+	static void println(T output, true_type) { //numeric
 		wstring x = (to_wstring(output)) + L"\n";
 		OutputDebugStringW(x.c_str());
 	}
 
 	template<class T>
-	static void println(T output, std::false_type) { //numeric
-		println("no \'println\' function for this data type");
+	static void println(T output, false_type) { //numeric
+		println("no \'println\' function for this data type", false_type{});
 		throw 0;
 	}
 
-	static void println (string output, false_type) { //non-numeric
+	static void println (const string output, false_type) { //non-numeric
 		/*basic_string<wchar_t> test = output;
 		OutputDebugStringW(test);*/
 		std::wstring_convert<codecvt_utf8_utf16<wchar_t>> converter;
@@ -39,35 +37,37 @@ namespace utils {
 	}
 
 
-	class angle {
+	class Angle {
 		public:
-			float getRadsExact();
-			float getRads();
-			float getDegs();
+			float getRadsExact() const;
+			float getRads() const;
+			float getDegs() const;
 			void setRads(float angle);
 			void setRadsExact(float angle);
 			void setDegs(float angle);
-			angle();
-			angle(bool inRads, float value);
-			angle operator=(angle &other);
+			Angle();
+			Angle(bool inRads, float value);
+			Angle operator=(const Angle &other);
 		private:
-			bool inRads;
-			float angleDegs;
-			float angleRads; //done between 0-2, not between 0-2PI, cause its nicer
+			bool inRads = true;
+			float angleDegs = 0;
+			float angleRads = 0; //done between 0-2, not between 0-2PI, cause its nicer
 	};
 
-	class vec3 {
+	class Vec3 {
 	public:
-		float x;
-		float y;
-		float z;
-		float xRot;
-		float yRot;
-		float zRot;
-		vec3(float x, float y, float z);
+		Vec3(float x, float y, float z) : x(x),
+		                                  y(y),
+		                                  z(z) {}
+
+		float x = 0;
+		float y = 0;
+		float z = 0;
+		float xRot = 0;
+		float yRot = 0;
+		float zRot = 0;
 		//TODO: add constructor for rotation
-		vec3 operator+(vec3 &other);
-		vec3();
+		Vec3() = default;
 	};
 
 	
@@ -77,6 +77,16 @@ namespace utils {
 		ss.clear();
 		ss << test;
 		return ss.str();
+	}
+
+	static float overflowConstrain(float currentVal, float increment, float constrain) { //constrain a value to 
+		float val = currentVal+increment;
+		if (val > constrain) {
+			val = val - constrain;
+			val = overflowConstrain(val, 0, constrain);
+
+		}
+		return val;
 	}
 
 }

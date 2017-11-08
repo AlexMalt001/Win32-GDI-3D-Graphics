@@ -3,73 +3,75 @@
 #include "Utils.h"
 #include <vector>
 #include "WindowManagement.h"
+// ReSharper disable CppUnusedIncludeDirective
 #include "3DComponents.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
+// ReSharper restore CppUnusedIncludeDirective
 
 using namespace utils;
 using namespace std;
 
 class Point {
 public:
-	Point() {};
+	Point() {}
+	Point& operator=(Point point);
 	float coOrds[ThreeDVertDims];
-	angle rotation[ThreeDVertDims];
+	Angle rotation[ThreeDVertDims];
 	Point(float x, float y, float z);
-	Point(float x, float y, float z, angle xRot, angle yRot, angle zRot);
-	void transform(vec3 transformVector);
-	void refresh(Point globalPoint);
-
+	Point(float x, float y, float z, Angle xRot, Angle yRot, Angle zRot);
+	void transform(Vec3 transformVector);
+	void refresh(Point globalPoint) const;
 };
 
 class CoOrdinateSystem {
 	public:
-		int Id;
+		int id;
 		Point origin;
+		CoOrdinateSystem& operator=(CoOrdinateSystem newCoOrdinateSystem);
 };
 
 class childCoOrdSys : public CoOrdinateSystem{
 	public:
-		CoOrdinateSystem parent;
-		childCoOrdSys(CoOrdinateSystem parent, Point origin);
-		childCoOrdSys();
+		CoOrdinateSystem &parent;
+		childCoOrdSys(CoOrdinateSystem &parent, Point origin, int Id);
 };
 
 class CoOrdSysManager {
 	public:
 		CoOrdSysManager();
 		int newCoOrdSys(Point origin);
-		//TODO: 'updateSys(Id);
-		void removeCoOrdSys(int Id);
+		//TODO: 'updateSys(id);
+		void removeCoOrdSys(int id);
 		vector<int> clearSpots; 
 		vector <CoOrdinateSystem> systems;
-		CoOrdinateSystem *globalCoOrdinateSystem;
+		CoOrdinateSystem &globalCoOrdinateSystem;
 };
 
-class UniversalPoint {
+class UniversalPoint { //TODO: inherit from Point
 public:
+	UniversalPoint() = default;
 	CoOrdSysManager *coOrdManager;
 	Point globalPoint;
-	void transform(vec3 transformVector);
-	UniversalPoint() {};
-	UniversalPoint(Point _globalPoint, CoOrdSysManager coOrdManager);
-	Point getPoint(int Id);
+	void transform(Vec3 transformVector);
+	UniversalPoint(Point _globalPoint, CoOrdSysManager *coOrdManager);
+	Point getPoint(int id);
 private:
 	vector<Point> children;
 };
 
-class camera {
-public:
+class Camera {
+public: //TODO: the encapsulation in this is actually painful
 	//childCoOrdSys cameraCoOrdSys;
 	UniversalPoint origin;
-	float distance;
-	angle fov;
+	float distance = 0.0; 
+	Angle fov;
 	void calculateDistance(screen& sc);
-	int Id;
+	int id = 0;
 
 	//TODO: constructors only for World
-	camera(UniversalPoint origin, angle fov);
-	camera();
+	Camera(UniversalPoint origin, Angle fov);
+	Camera();
 };
 
 class Face {
@@ -92,10 +94,10 @@ public:
 	UniversalPoint createPoint(float x,float y, float  z);
 	UniversalPoint createPoint(Point point);
 	//TODO: 'createCamera();
-	vector<camera> cameras;
+	vector<Camera> cameras;
 	vector<Object3D> objects;
-	camera *activeCamera;
-	int latestCoOrdId;
+	Camera &activeCamera;
 	void draw(screen sc);
 	World();
 };
+//test

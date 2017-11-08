@@ -3,18 +3,16 @@
 #include <math.h>
 using namespace utils;
 
-angle::angle() {
+Angle::Angle(): inRads(false) {}
 
-}
-
-angle angle::operator=(angle &other) {
+Angle Angle::operator=(const Angle &other) {
 	inRads = other.inRads;
 	angleDegs = other.angleDegs;
 	angleRads = other.angleRads;
 	return *this;
 }
 
-angle::angle(bool _inRads, float value) {
+Angle::Angle(bool _inRads, float value) {
 	if (_inRads == true) {
 		angleRads = value;
 		angleDegs = value*180;
@@ -25,33 +23,33 @@ angle::angle(bool _inRads, float value) {
 	inRads = _inRads;
 }
 
-float angle::getRadsExact() {
+float Angle::getRadsExact() const {
 	return float(getRads()*M_PI);
 }
 
-float angle::getRads() {
+float Angle::getRads() const {
 	return angleRads;
 }
 
-float angle::getDegs() {
+float Angle::getDegs() const {
 	return angleDegs;
 }
 
-void angle::setRadsExact(float value) {
+void Angle::setRadsExact(float value) {
 	setRads(float(value/M_PI));
 }
 
-void angle::setRads(float value) {
+void Angle::setRads(float value) {
 	angleRads = value;
 	angleDegs = value * 180;
 	inRads = true;
 }
 
-void angle::setDegs(float value) {
+void Angle::setDegs(float value) {
 	angleDegs = value;
 	angleRads = value / 180;
 	inRads = false;
 }
 
-
+//test
 

@@ -4,68 +4,64 @@
 
 using namespace utils;
 
-vec3 vec3::operator+(vec3 &other) {
-	return vec3(x + other.x, y + other.y, z + other.z);
-}
 
-vec3::vec3(float _x, float _y, float _z) {
-	x = _x;
-	y = _y;
-	z = _z;
-}
 
-void camera::calculateDistance(screen& sc) {
+void Camera::calculateDistance(screen& sc) {
 	int height = sc.getHeight();
 	int angle = fov.getRads() / 2;
-	distance = height / tan(angle);
+
+	distance = float(height / tan(angle));
 }
 
-CoOrdSysManager::CoOrdSysManager() {
-	systems.push_back(CoOrdinateSystem());
-	systems[0].Id = 0;
-	globalCoOrdinateSystem = &(systems[0]);
+CoOrdSysManager::CoOrdSysManager() : systems(*new vector<CoOrdinateSystem>(1)), globalCoOrdinateSystem(systems[0]) {
+	clearSpots = vector<int>(0);
+	systems[0].id = 0;
+	systems[0].origin = Point(0, 0, 0);
 }
 
-camera::camera(UniversalPoint _origin, angle _fov) {
+Camera::Camera(UniversalPoint _origin, Angle _fov) {
 	origin = _origin;
 	fov = _fov;
 	int test = (*origin.coOrdManager).newCoOrdSys(origin.globalPoint);
-	Id = test;
+	id = test;
+	//TODO: calculateDistance();
 }
 
-camera::camera() {
+Camera::Camera() {
 }
 
-void UniversalPoint::transform(vec3 transformVector) {
+void UniversalPoint::transform(Vec3 transformVector) {
 	globalPoint.transform(transformVector);
 	for (int i = 0; i < children.size(), i++;) {
 		children[i].refresh(globalPoint);
 	}
 }
 
-UniversalPoint::UniversalPoint(Point _globalPoint, CoOrdSysManager _coOrdManager) {
-	coOrdManager = &_coOrdManager;
-	globalPoint = _globalPoint;
 
-}
-
-void Point::transform(vec3 transformVector) {
+void Point::transform(Vec3 transformVector) {
 	coOrds[0] = coOrds[0] + transformVector.x;
 	coOrds[1] = coOrds[1] + transformVector.y;
 	coOrds[2] = coOrds[2] + transformVector.z;
 }
 
-Point::Point(float x, float y, float z)
-{
-	rotation[0] = angle(true, 0);
-	rotation[1] = angle(true, 0);
-	rotation[2] = angle(true, 0);
+
+Point& Point::operator=(Point point) {
+	Point p = Point(point);
+	swap(coOrds, p.coOrds);
+	swap(rotation, p.rotation);
+	return *this;
+}
+
+Point::Point(const float x, const float y, const float z) {
+	rotation[0] = Angle(true, 0);
+	rotation[1] = Angle(true, 0);
+	rotation[2] = Angle(true, 0);
 	coOrds[0] = x;
 	coOrds[1] = y;
 	coOrds[2] = z;
 }
 
-Point::Point(float x, float y, float z, angle xRot, angle yRot, angle zRot)
+Point::Point(float x, float y, float z, Angle xRot, Angle yRot, Angle zRot)
 {
 	rotation[0] = xRot;
 	rotation[1] = yRot;
@@ -75,28 +71,27 @@ Point::Point(float x, float y, float z, angle xRot, angle yRot, angle zRot)
 	coOrds[2] = z;
 }
 
-void Point::refresh(Point globalPoint) {
-	vec3 transformationVector;
+
+//TODO: remove this tag once no longer testing
+// ReSharper disable once CppMemberFunctionMayBeStatic
+void Point::refresh(Point globalPoint) const {
+	Vec3 transformationVector;
 	float test1 = globalPoint.coOrds[0];
 	Point test2(0, 0, 0);
 	float test4 = test2.coOrds[0];
 	float test3 = test1 - test4;
 	transformationVector.x = test3;
-	//TODO work out what this is
+	//TODO: Do rotation.
 }
 
-vec3::vec3() {
-}
 
-childCoOrdSys::childCoOrdSys(CoOrdinateSystem _parent, Point _origin) {
-	parent = _parent;
+
+childCoOrdSys::childCoOrdSys(CoOrdinateSystem &_parent, Point _origin, int _Id) : parent(_parent) {
 	origin = _origin;
+	id = _Id;
 	//TODO: register with coOrdSysManager?
 }
 
-childCoOrdSys::childCoOrdSys()
-{
-}
 
 Point findIntersect() {
 	//TODO: fill in this
@@ -105,12 +100,13 @@ Point findIntersect() {
 
 UniversalPoint World::createPoint(float x, float y, float z)
 {
-	return UniversalPoint(Point(x,y,z),*this);
+	println(systems.size());
+	return UniversalPoint(Point(x,y,z), this);
 }
 
 UniversalPoint World::createPoint(Point point)
 {
-	return UniversalPoint(point,*this);
+	return UniversalPoint(point, this);
 }
 
 void World::draw(screen sc) {
@@ -162,26 +158,30 @@ void World::draw(screen sc) {
 
 
 	//VISIBILITY CHECKING CODE (low processing cost check to see if the face is in the viewport
-	int cameraId = (*activeCamera).Id;
-	vector<Face> visibleFaces; //a vector that will contain all faces that can be seen by the camera
-	for (int i = 0; i < improvedFaces.size(), i = i+1;) { //for every face
+	int cameraId = activeCamera.id;
+	vector<Face> visibleFaces; //a vector that will contain all faces that can be seen by the Camera
+	i = 0;
+	while(i<improvedFaces.size()) { //for every face
 		bool visible = false; //a variable that will be changed to determine whether or not part of the face is visible
 		int j = 0;
-		while(j < improvedFaces[i-1].verts.size()) { //for every vertex of the face
+		while(j < improvedFaces[i].verts.size()) { //for every vertex of the face
 
 			if (!visible) { //if one vertex of the face has been found to be visible, at least some part of the face is visible, therefore the other points dont need to be checked
-
+				Point p = improvedFaces[i].verts[j].getPoint(cameraId);
 				
 				//find polar co-ordinate style angles for each point
-				angle xyTheta = angle(true, atan(improvedFaces[i-1].verts[j].getPoint(cameraId).coOrds[1] / improvedFaces[i-1].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
-				angle xzTheta = angle(true, atan(improvedFaces[i-1].verts[j].getPoint(cameraId).coOrds[2] / improvedFaces[i-1].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
+				Angle xyTheta = Angle(true, atan(improvedFaces[i].verts[j].getPoint(cameraId).coOrds[1] / improvedFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
+				Angle xzTheta = Angle(true, atan(improvedFaces[i].verts[j].getPoint(cameraId).coOrds[2] / improvedFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
 				
+				//readability stuff \/
+				float fovRads = activeCamera.fov.getRads();
+				float &camDist = activeCamera.distance;
+				int scHeight = sc.getHeight();
 
-				//check if polar co-ordinates of the point are (not) within the fov of the camera
-				if (((*activeCamera).fov.getRads() / 2)*(-1) > xzTheta.getRads() > (*activeCamera).fov.getRads() / 2 &&
-					(atan((*activeCamera).distance / sc.getHeight()))*(-1) > xyTheta.getRads() > atan((*activeCamera).distance / sc.getHeight())) {
-				}
-				else { //if they are (ie not not) then a part of the face is definitely visible
+				//check if polar co-ordinates of the point are (not) within the fov of the Camera
+				if (fovRads / 2*-1 > xzTheta.getRads() && xzTheta.getRads() > fovRads / 2 &&
+					atan(camDist / scHeight)*-1 > xyTheta.getRads() && xyTheta.getRads() > atan(camDist / scHeight)) {
+				} else { //if they are (ie not not) then a part of the face is definitely visible
 					visible = true;
 				}
 			}
@@ -192,38 +192,44 @@ void World::draw(screen sc) {
 			//if the face is visible, add the face to a list of visible faces
 			visibleFaces.push_back(improvedFaces[i]);
 		}
+		i++;
 	}
+
 	i = 0;
 	while( i < visibleFaces.size()) {
-		Face workingFace = visibleFaces[i];
-		vector<Point> facePoints(2);
-		float worldXs[2], worldYs[2], worldZs[2];
-		int j = 0;
-		while( j < 2) {
+		Face workingFace = visibleFaces[i]; //store the face currently being worked on
+		vector<Point> facePoints(3); //vector of the Face's vertices
+		float worldXs[3], worldYs[3], worldZs[3]; //
+		for (int j = 0; j <= 2; j++) { //for each vertex of the tri
 			println(workingFace.verts.size());
 			println(j);
-			facePoints[j] = workingFace.verts[j].getPoint(cameraId);
+			facePoints[j]/**/ = workingFace.verts[j].getPoint(cameraId);
 			worldXs[j] = facePoints[j].coOrds[0];
 			worldYs[j] = facePoints[j].coOrds[1];
 			worldZs[j] = facePoints[j].coOrds[2];
-			j++;
+			//j++;
 		}
 		
-		int screenXs[2];
-		int screenYs[2];
-		j = 0;
+		int screenXs[3];
+		int screenYs[3];
+		int j = 0; //TODO: make a for loop
+		activeCamera.calculateDistance(sc);
 		while(j < 2) {
 			//X
-			screenXs[j] = float((*activeCamera).distance*(worldXs[j] / worldZs[j]));
+			screenXs[j] = float(activeCamera.distance*(worldXs[j] / worldZs[j]));
 			//Y
-			screenYs[j] = float((*activeCamera).distance*(worldYs[j] / worldZs[j]));
-			//println(worldXs[j]);
-			//println(worldYs[j]);
+			screenYs[j] = float(activeCamera.distance*(worldYs[j] / worldZs[j]));
+
 			j++;
 		}
 
 		//POINT0->POINT1
-		int lowerXX, upperXX, lowerXY, upperXY;
+		// ReSharper disable CppInconsistentNaming
+		int lowerXX;
+		int upperXX;
+		int lowerXY;
+		int upperXY;
+		// ReSharper restore CppInconsistentNaming
 		if (screenXs[0] > screenXs[1]) {
 			lowerXX = screenXs[1];
 			lowerXY = screenYs[1];
@@ -236,10 +242,11 @@ void World::draw(screen sc) {
 			upperXX = screenXs[1];
 			upperXY = screenYs[1];
 		}
-		for (int j = 0; j < (lowerXX - upperXX), i++;) {
+
+		for (int k = 0; k < lowerXX - upperXX; k++) {
 			int deltaY = upperXY - lowerXY;
 			int deltaX = upperXX - lowerXX;
-			sc.drawPx(j,j*(deltaY/deltaX),0xFFFFFF);
+			sc.drawPx(k,k*(deltaY/deltaX),0xFFFFFF);
 		}
 
 		i++;
@@ -248,13 +255,29 @@ void World::draw(screen sc) {
 	sc.refresh(); //copy the working bitmap to the actual screen
 }
 
-World::World() {
+World::World() : activeCamera(*new Camera(UniversalPoint(Point(0,0,0), this), Angle(true,90))) {
+	cameras.push_back(activeCamera);
 }
+
+//World::World() : activeCamera {}
 
 Face::Face(vector<UniversalPoint> _verts) {
 	verts = _verts;
 }
 
+
+UniversalPoint::UniversalPoint(Point _globalPoint, CoOrdSysManager *_coOrdManager)
+{
+	coOrdManager = _coOrdManager;
+	globalPoint = _globalPoint; //TODO: Pointerize
+}
+
+float keepPositive(float input) {
+	if (input < 0) {
+		return -input;
+	}
+		return input;
+}
 
 Point UniversalPoint::getPoint(int _Id) {
 	CoOrdinateSystem target = (*coOrdManager).systems[_Id];
@@ -262,12 +285,33 @@ Point UniversalPoint::getPoint(int _Id) {
 	Point workingPoint = Point(globalPoint.coOrds[0] - origin.coOrds[0], globalPoint.coOrds[1] - origin.coOrds[1], globalPoint.coOrds[2] - origin.coOrds[2]); 
 
 
+	//around z-axis
+	float radius = sqrt(pow(workingPoint.coOrds[0], 2) + pow(workingPoint.coOrds[1], 2));;
+	Angle zOriginAngle;
+	if (workingPoint.coOrds[1] > 0) {
+		if (workingPoint.coOrds[0] > 0) {
+			zOriginAngle = Angle(true, atan(keepPositive(workingPoint.coOrds[0]) / keepPositive(workingPoint.coOrds[1])) / M_PI); //tan(theta) = x/y;
+		}
+		else {
+			zOriginAngle = Angle((atan(keepPositive(workingPoint.coOrds[1]) / keepPositive(workingPoint.coOrds[0]))) / M_PI, true); //tan(theta) = y/x
+		}
+	}
+	else {
+		if (workingPoint.coOrds[0] < 0) {
+			zOriginAngle = Angle((atan(keepPositive(workingPoint.coOrds[0]) / keepPositive(workingPoint.coOrds[1]))) / M_PI, true); //tan(theta) = x/y
+		}
+		else {
+			zOriginAngle = Angle((atan(keepPositive(workingPoint.coOrds[1]) / keepPositive(workingPoint.coOrds[0]))) / M_PI, true); //tan(theta) = y/x
+		}
+
+	}
+
 	//rotation
 
-	//z-axis
+	/*//z-axis
 	//transformations done on a plane perpendicular to the z-axis
-	angle startYtoPt = angle(true, (atan(workingPoint.coOrds[0]/workingPoint.coOrds[1]))/M_2_PI);//the original angle between the Y-axis and the line between the origin of the co-ord system and the point
-	angle endYtoPt = angle(true, startYtoPt.getRads() + (origin.rotation[2].getRads()));
+	Angle startYtoPt = Angle(true, (atan(workingPoint.coOrds[0]/workingPoint.coOrds[1]))/M_2_PI);//the original Angle between the Y-axis and the line between the origin of the co-ord system and the point
+	Angle endYtoPt = Angle(true, startYtoPt.getRads() + (origin.rotation[2].getRads()));
 	float radius = sqrt(pow(workingPoint.coOrds[0],2) + pow(workingPoint.coOrds[1],2));
 	workingPoint.coOrds[1] = (cos(endYtoPt.getRadsExact()))*radius;
 	workingPoint.coOrds[0] = sqrt(pow(radius, 2) - pow(workingPoint.coOrds[1], 2));
@@ -275,20 +319,20 @@ Point UniversalPoint::getPoint(int _Id) {
 
 	//x-axis
 	//transformations done on a plane perpendicular to the z-axis
-	angle startZtoPt = angle(true, (atan(workingPoint.coOrds[3] / workingPoint.coOrds[2])) / M_2_PI);
-	angle endZtoPt = angle(true, startZtoPt.getRads() + (origin.rotation[0].getRads()));
+	Angle startZtoPt = Angle(true, (atan(workingPoint.coOrds[3] / workingPoint.coOrds[2])) / M_2_PI);
+	Angle endZtoPt = Angle(true, startZtoPt.getRads() + (origin.rotation[0].getRads()));
 	radius = sqrt(pow(workingPoint.coOrds[3], 2) + pow(workingPoint.coOrds[2], 2));
 	workingPoint.coOrds[1] = (cos(endZtoPt.getRadsExact()))*radius;
 	workingPoint.coOrds[2] = sqrt(pow( radius, 2) - pow(workingPoint.coOrds[1], 2));
 
 	//y-axis
-	angle startXtoPt = angle(true, (atan(workingPoint.coOrds[0] / workingPoint.coOrds[3])) / M_2_PI);
-	angle endXtoPt = angle(true, startXtoPt.getRads() + (origin.rotation[1].getRads()));
+	Angle startXtoPt = Angle(true, (atan(workingPoint.coOrds[0] / workingPoint.coOrds[3])) / M_2_PI);
+	Angle endXtoPt = Angle(true, startXtoPt.getRads() + (origin.rotation[1].getRads()));
 	radius = sqrt(pow(workingPoint.coOrds[0], 2) + pow(workingPoint.coOrds[2], 2));
 	workingPoint.coOrds[2] = (cos(endXtoPt.getRadsExact()))*radius;
 	workingPoint.coOrds[0] = sqrt(pow(radius, 2) - pow(workingPoint.coOrds[1], 2));
-
-	if (children.size() - 1 > _Id) {
+	*/
+	if (children.size() <= _Id) {
 		children.resize(_Id+1);
 	}
 	children[_Id] = workingPoint;
@@ -297,20 +341,29 @@ Point UniversalPoint::getPoint(int _Id) {
 
 int CoOrdSysManager::newCoOrdSys(Point origin)
 {
-	int Id;
-	if (clearSpots.size() != 0) {
-		Id = clearSpots[0];
-		systems[Id] = childCoOrdSys((*globalCoOrdinateSystem), origin);
+	int id;
+	if (clearSpots.size() > 0) {
+		id = clearSpots[0];
+		systems[id] = static_cast<CoOrdinateSystem>(childCoOrdSys(globalCoOrdinateSystem, origin, id));
 	} else {
-		Id = systems.size();
-		systems.push_back(childCoOrdSys((*globalCoOrdinateSystem), origin));
+		id = systems.size();
+		systems.push_back(childCoOrdSys((globalCoOrdinateSystem), origin, id));
 	}
-	return Id;
+	return id;
 }
 
-void CoOrdSysManager::removeCoOrdSys(int Id)
+void CoOrdSysManager::removeCoOrdSys(int id)
 {
-	delete &systems[Id];
-	systems[Id] = CoOrdinateSystem();
-	clearSpots.push_back(Id);
+	delete &systems[id];
+	systems[id] = CoOrdinateSystem();
+	clearSpots.push_back(id);
 }
+
+CoOrdinateSystem & CoOrdinateSystem::operator=(CoOrdinateSystem newCoOrdinateSystem)
+{
+	CoOrdinateSystem c = CoOrdinateSystem(newCoOrdinateSystem);
+	swap(id, c.id);
+	swap(origin, c.origin);
+	return *this;
+}
+//test
