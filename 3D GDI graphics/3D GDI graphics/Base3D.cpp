@@ -8,7 +8,7 @@ using namespace utils;
 
 void Camera::calculateDistance(screen& sc) {
 	int height = sc.getHeight();
-	int angle = fov.getRads() / 2;
+	int angle = int(fov.getRads() / 2);
 
 	distance = float(height / tan(angle));
 }
@@ -170,8 +170,8 @@ void World::draw(screen sc) {
 				Point p = improvedFaces[i].verts[j].getPoint(cameraId);
 				
 				//find polar co-ordinate style angles for each point
-				Angle xyTheta = Angle(true, atan(improvedFaces[i].verts[j].getPoint(cameraId).coOrds[1] / improvedFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
-				Angle xzTheta = Angle(true, atan(improvedFaces[i].verts[j].getPoint(cameraId).coOrds[2] / improvedFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI);
+				Angle xyTheta = Angle(true, float(atan(improvedFaces[i].verts[j].getPoint(cameraId).coOrds[1] / improvedFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI));
+				Angle xzTheta = Angle(true, float(atan(improvedFaces[i].verts[j].getPoint(cameraId).coOrds[2] / improvedFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI));
 				
 				//readability stuff \/
 				float fovRads = activeCamera.fov.getRads();
@@ -210,44 +210,20 @@ void World::draw(screen sc) {
 			//j++;
 		}
 		
-		int screenXs[3];
-		int screenYs[3];
-		int j = 0; //TODO: make a for loop
+		Point screenPoints[3];
 		activeCamera.calculateDistance(sc);
-		while(j < 2) {
+		for (int j = 0; j <= 2; j++) {
 			//X
-			screenXs[j] = float(activeCamera.distance*(worldXs[j] / worldZs[j]));
+			screenPoints[j].coOrds[0] = int(float(activeCamera.distance*(float(worldXs[j]) / worldZs[j])));
 			//Y
-			screenYs[j] = float(activeCamera.distance*(worldYs[j] / worldZs[j]));
-
-			j++;
+			screenPoints[j].coOrds[1] = int(float(activeCamera.distance*(float(worldYs[j]) / worldZs[j])));
 		}
-		
-		//POINT0->POINT1
-		// ReSharper disable CppInconsistentNaming
-		int lowerXX;
-		int upperXX;
-		int lowerXY;
-		int upperXY;
-		// ReSharper restore CppInconsistentNaming
-		if (screenXs[0] > screenXs[1]) {
-			lowerXX = screenXs[1];
-			lowerXY = screenYs[1];
-			upperXX = screenXs[0];
-			upperXY = screenYs[0];
-		}
-		else {
-			lowerXX = screenXs[0];
-			lowerXY = screenYs[0];
-			upperXX = screenXs[1];
-			upperXY = screenYs[1];
-		}
-
-		for (int k = 0; k < lowerXX - upperXX; k++) {
-			int deltaY = upperXY - lowerXY;
-			int deltaX = upperXX - lowerXX;
-			sc.drawPx(k,k*(deltaY/deltaX),0xFFFFFF);
-		}
+		sc.drawDiagonal(screenPoints[0].coOrds[0], screenPoints[0].coOrds[1],
+			screenPoints[1].coOrds[0], screenPoints[1].coOrds[1], 0xFF0000);
+		sc.drawDiagonal(screenPoints[0].coOrds[0], screenPoints[0].coOrds[1],
+			screenPoints[2].coOrds[0], screenPoints[2].coOrds[1], 0xFF0000);
+		sc.drawDiagonal(screenPoints[1].coOrds[0], screenPoints[1].coOrds[1],
+			screenPoints[2].coOrds[0], screenPoints[2].coOrds[1], 0xFF0000);
 
 		i++;
 	}
@@ -290,7 +266,7 @@ Point UniversalPoint::getPoint(int _Id) {
 	Angle zOriginAngle;
 	if (workingPoint.coOrds[1] > 0) {
 		if (workingPoint.coOrds[0] > 0) {
-			zOriginAngle = Angle(true, atan(keepPositive(workingPoint.coOrds[0]) / keepPositive(workingPoint.coOrds[1])) / M_PI); //tan(theta) = x/y;
+			zOriginAngle = Angle(true, float(atan(keepPositive(workingPoint.coOrds[0]) / keepPositive(workingPoint.coOrds[1])) / M_PI)); //tan(theta) = x/y;
 		}
 		else {
 			zOriginAngle = Angle((atan(keepPositive(workingPoint.coOrds[1]) / keepPositive(workingPoint.coOrds[0]))) / M_PI, true); //tan(theta) = y/x
@@ -346,7 +322,7 @@ int CoOrdSysManager::newCoOrdSys(Point origin)
 		id = clearSpots[0];
 		systems[id] = static_cast<CoOrdinateSystem>(childCoOrdSys(globalCoOrdinateSystem, origin, id));
 	} else {
-		id = systems.size();
+		id = int(systems.size());
 		systems.push_back(childCoOrdSys((globalCoOrdinateSystem), origin, id));
 	}
 	return id;

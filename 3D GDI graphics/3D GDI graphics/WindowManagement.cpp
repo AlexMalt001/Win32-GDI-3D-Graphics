@@ -1,6 +1,8 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include "WindowManagement.h"
+#include <math.h>
+#include "Utils.h"
 
 
 const LPCWCHAR g_szClassName = L"myWindowClass"; //name of window class - 'sz' = string, zero terminated
@@ -23,6 +25,36 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
 	return 0;
+}
+
+void screen::drawDiagonal(int x1, int y1, int x2, int y2, DWORD colour) {
+	//TODO: good AA
+	int greaterX = (x1 > x2) ? x1 : x2;
+	int greaterY = (x1 > x2) ? y1 : y2;
+	int lesserX  = (x1 > x2) ? x2 : x1;
+	int lesserY  = (x1 > x2) ? x2 : x1;
+
+	float deriv = float(greaterY - lesserY) / (greaterX - lesserX);
+
+	float remainingY = deriv;
+	int currentX = 0;
+	int currentY = 0;
+	while(currentX < greaterX && currentY != greaterY) {
+		drawPx(currentX + lesserX, currentY + lesserY, colour);
+		if(remainingY > 0.5) {
+			currentY++;
+			remainingY--;
+		}
+		else if (remainingY > 0.5) {
+			
+			currentY--;
+			remainingY++;
+		}else {
+			currentX++;
+			remainingY += deriv;
+		}
+
+	}
 }
 
 WNDCLASSEX& createWindowClass(HINSTANCE hinstance) {

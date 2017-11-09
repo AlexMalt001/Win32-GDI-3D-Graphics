@@ -1,11 +1,11 @@
 ﻿#include <Windows.h>
 #include <stdlib.h>
 #include "WindowManagement.h"
-// ReSharper disable once CppUnusedIncludeDirective
+// ReSharper disable CppUnusedIncludeDirective
 #include "3DComponents.h"
 #include "Base3D.h"
 #include "Utils.h"
-
+//ReSharper enable CppUnusedIncludeDirective
 
 const int tester = 2;
 
@@ -34,10 +34,10 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	println(mainWorld.activeCamera.id);
 	println(mainWorld.activeCamera.id);
-	Point p1 = Point(0,0,100);
+	Point p1 = Point(20,20,100);
 	println(mainWorld.activeCamera.id);
-	Point p2 = Point(30, 0, 100);
-	Point p3 = Point(0, 30, 100);
+	Point p2 = Point(40, 10, 200);
+	Point p3 = Point(20, 50, 100);
 
 	vector<UniversalPoint> points;
 	points.push_back(mainWorld.createPoint(p1));
@@ -51,9 +51,7 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	mainWorld.objects.push_back(obj);
 
-	while (1 != 0) {
-		mainWorld.draw(sc);
-	}
+	mainWorld.draw(sc);
 
 	// ReSharper disable CppUnreachableCode
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
