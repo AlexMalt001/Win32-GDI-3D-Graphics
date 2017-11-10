@@ -29,19 +29,17 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	screen sc(512, 512, hwnd);
 	
-
 	World mainWorld;
-
 	//TODO: center of camera is in top left. this is NFG.
 	Point p1 = Point(25,23,100);
 	Point p2 = Point(42, 12, 100);
 	Point p3 = Point(20, 50, 100);
 
 	Point p4 = Point(5, 15, 50);
-	Point p5 = Point(11, 10, 50);
+	Point p5 = Point(10, 10, 50);
 	Point p6 = Point(20, 12, 50);
-	Point p7 = Point(21, 21, 50);
-	Point p8 = Point(9, 19, 50);
+	Point p7 = Point(20, 20, 50);
+	Point p8 = Point(10, 20, 50);
 	
 	
 
