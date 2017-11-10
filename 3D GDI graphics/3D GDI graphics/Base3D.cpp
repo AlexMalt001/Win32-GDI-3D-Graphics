@@ -236,6 +236,7 @@ void World::draw(screen sc) {
 	sc.refresh(); //copy the working bitmap to the actual screen
 }
 
+
 World::World() : activeCamera(*new Camera(UniversalPoint(Point(0,0,0), this), Angle(true,90))) {
 	cameras.push_back(activeCamera);
 }
