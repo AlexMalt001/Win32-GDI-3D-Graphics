@@ -32,15 +32,18 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	World mainWorld;
 
+	//TODO: center of camera is in top left. this is NFG.
 	Point p1 = Point(25,23,100);
 	Point p2 = Point(42, 12, 100);
 	Point p3 = Point(20, 50, 100);
 
-	Point p4 = Point(20, 20, 100);
-	Point p5 = Point(10, 10, 100);
-	Point p6 = Point(10, 20, 100);
-	Point p7 = Point(10, 10, 100);
-	//TODO: it doesnt draw it
+	Point p4 = Point(5, 15, 50);
+	Point p5 = Point(11, 10, 50);
+	Point p6 = Point(20, 12, 50);
+	Point p7 = Point(21, 21, 50);
+	Point p8 = Point(9, 19, 50);
+	
+	
 
 	vector<UniversalPoint> points;
 	points.push_back(mainWorld.createPoint(p1));
@@ -54,6 +57,7 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	points2.push_back(mainWorld.createPoint(p5));
 	points2.push_back(mainWorld.createPoint(p6));
 	points2.push_back(mainWorld.createPoint(p7));
+	points2.push_back(mainWorld.createPoint(p8));
 
 	Face face2 = Face(points2);
 

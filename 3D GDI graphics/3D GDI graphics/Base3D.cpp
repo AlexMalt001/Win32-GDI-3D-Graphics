@@ -156,7 +156,7 @@ void World::draw(screen sc) {
 		i = i + 1;
 	}
 
-
+	//TODO: sort tris by something. Havent decided what yet.
 	//VISIBILITY CHECKING CODE (low processing cost check to see if the face is in the viewport
 	int cameraId = activeCamera.id;
 	vector<Face> visibleFaces; //a vector that will contain all faces that can be seen by the Camera
