@@ -24,7 +24,6 @@ Camera::Camera(UniversalPoint _origin, Angle _fov) {
 	fov = _fov;
 	int test = (*origin.coOrdManager).newCoOrdSys(origin.globalPoint);
 	id = test;
-	//TODO: calculateDistance();
 }
 
 Camera::Camera() {
@@ -82,7 +81,6 @@ void Point::refresh(Point globalPoint) const {
 	float test4 = test2.coOrds[0];
 	float test3 = test1 - test4;
 	transformationVector.x = test3;
-	//TODO: Do rotation.
 }
 
 
@@ -111,7 +109,7 @@ UniversalPoint World::createPoint(Point point)
 }
 
 void World::draw(screen sc) {
-	activeCamera.calculateDistance((sc));
+	activeCamera.calculateDistance(sc);
 	//REMOVE ALL FACES IN SCENE FROM THEIR ASSOCIATED OBJECTS
 	vector<Face> faces; //vector that will contain all faces in the world
 	int i = 0;
@@ -157,7 +155,6 @@ void World::draw(screen sc) {
 		i = i + 1;
 	}
 
-	//TODO: sort tris by something. Havent decided what yet.
 	//VISIBILITY CHECKING CODE (low processing cost check to see if the face is in the viewport
 	int cameraId = activeCamera.id;
 	vector<Face> visibleFaces; //a vector that will contain all faces that can be seen by the Camera

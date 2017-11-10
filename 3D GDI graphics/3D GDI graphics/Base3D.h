@@ -70,14 +70,14 @@ public: //TODO: the encapsulation in this is actually painful
 	int id = 0;
 
 	//TODO: constructors only for World
-	Camera(UniversalPoint origin, Angle fov);
-	Camera();
+	/*protected*/Camera(UniversalPoint origin, Angle fov);
+	/*protected*/Camera();
 };
 
 class Face {
 	//TODO: add a back reference to the object the face belongs to for texturing
 	public:
-		vector<UniversalPoint> verts;
+		vector<UniversalPoint> verts;//TODO:Pointerise
 		Face(vector<UniversalPoint> verts);
 
 };
