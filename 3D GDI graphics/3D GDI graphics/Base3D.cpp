@@ -129,7 +129,7 @@ void World::draw(screen sc) {
 	vector<Face> improvedFaces; //vector that will contain the newly broken down face
 	i = 0;
 	while (i < faces.size()) { //for every face
-		if (faces[i].verts.size() > 2) { //face only needs to be processed if it is not already a tri
+		if (faces[i].verts.size() > 3) { //face only needs to be processed if it is not already a tri
 			Face face = faces[i]; //reference to current face. readability.
 			UniversalPoint firstVert = faces[i].verts[0]; //first vertex of the current face. for readability
 			int j = 0;
@@ -196,7 +196,7 @@ void World::draw(screen sc) {
 	}
 
 	i = 0;
-	while( i < visibleFaces.size()) {
+	while( i < visibleFaces.size()) { //for every visible face
 		Face workingFace = visibleFaces[i]; //store the face currently being worked on
 		vector<Point> facePoints(3); //vector of the Face's vertices
 		float worldXs[3], worldYs[3], worldZs[3]; //
@@ -218,12 +218,16 @@ void World::draw(screen sc) {
 			//Y
 			screenPoints[j].coOrds[1] = int(float(activeCamera.distance*(float(worldYs[j]) / worldZs[j])));
 		}
+		//DOESNT LIKE IT WHEN X VALS ARE THE SAME
 		sc.drawDiagonal(screenPoints[0].coOrds[0], screenPoints[0].coOrds[1],
-			screenPoints[1].coOrds[0], screenPoints[1].coOrds[1], 0xFF0000);
+			screenPoints[1].coOrds[0], screenPoints[1].coOrds[1], 0xFFFFFF);
 		sc.drawDiagonal(screenPoints[0].coOrds[0], screenPoints[0].coOrds[1],
-			screenPoints[2].coOrds[0], screenPoints[2].coOrds[1], 0xFF0000);
+			screenPoints[2].coOrds[0], screenPoints[2].coOrds[1], 0xFFFFFF);
 		sc.drawDiagonal(screenPoints[1].coOrds[0], screenPoints[1].coOrds[1],
-			screenPoints[2].coOrds[0], screenPoints[2].coOrds[1], 0xFF0000);
+			screenPoints[2].coOrds[0], screenPoints[2].coOrds[1], 0xFFFFFF);
+		sc.drawPx(screenPoints[0].coOrds[0], screenPoints[0].coOrds[1], 0x00FFFF);
+		sc.drawPx(screenPoints[1].coOrds[0], screenPoints[1].coOrds[1], 0xFFFFFF);
+		sc.drawPx(screenPoints[2].coOrds[0], screenPoints[2].coOrds[1], 0x0000FF);
 
 		i++;
 	}

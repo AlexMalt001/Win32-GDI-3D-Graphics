@@ -32,12 +32,15 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	World mainWorld;
 
-	println(mainWorld.activeCamera.id);
-	println(mainWorld.activeCamera.id);
-	Point p1 = Point(20,20,100);
-	println(mainWorld.activeCamera.id);
-	Point p2 = Point(40, 10, 200);
+	Point p1 = Point(25,23,100);
+	Point p2 = Point(42, 12, 100);
 	Point p3 = Point(20, 50, 100);
+
+	Point p4 = Point(20, 20, 100);
+	Point p5 = Point(10, 10, 100);
+	Point p6 = Point(10, 20, 100);
+	Point p7 = Point(10, 10, 100);
+	//TODO: it doesnt draw it
 
 	vector<UniversalPoint> points;
 	points.push_back(mainWorld.createPoint(p1));
@@ -46,10 +49,22 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	Face face = Face(points);
 
+	vector<UniversalPoint> points2;
+	points2.push_back(mainWorld.createPoint(p4));
+	points2.push_back(mainWorld.createPoint(p5));
+	points2.push_back(mainWorld.createPoint(p6));
+	points2.push_back(mainWorld.createPoint(p7));
+
+	Face face2 = Face(points2);
+
 	Object3D obj;
 	obj.faces.push_back(face);
+
+	Object3D obj2;
+	obj.faces.push_back(face2);
 	
 	mainWorld.objects.push_back(obj);
+	mainWorld.objects.push_back(obj2);
 
 	mainWorld.draw(sc);
 

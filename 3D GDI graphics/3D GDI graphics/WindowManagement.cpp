@@ -32,20 +32,20 @@ void screen::drawDiagonal(int x1, int y1, int x2, int y2, DWORD colour) {
 	int greaterX = (x1 > x2) ? x1 : x2;
 	int greaterY = (x1 > x2) ? y1 : y2;
 	int lesserX  = (x1 > x2) ? x2 : x1;
-	int lesserY  = (x1 > x2) ? x2 : x1;
+	int lesserY  = (x1 > x2) ? y2 : y1;
 
 	float deriv = float(greaterY - lesserY) / (greaterX - lesserX);
 
 	float remainingY = deriv;
 	int currentX = 0;
 	int currentY = 0;
-	while(currentX < greaterX && currentY != greaterY) {
+	while(currentX < greaterX-lesserX && currentY != greaterY-lesserY) {
 		drawPx(currentX + lesserX, currentY + lesserY, colour);
 		if(remainingY > 0.5) {
 			currentY++;
 			remainingY--;
 		}
-		else if (remainingY > 0.5) {
+		else if (remainingY <- 0.5) {
 			
 			currentY--;
 			remainingY++;
