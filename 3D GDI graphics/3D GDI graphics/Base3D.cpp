@@ -212,9 +212,9 @@ void World::draw(screen sc) {
 		activeCamera.calculateDistance(sc);
 		for (int j = 0; j <= 2; j++) {
 			//X
-			screenPoints[j].coOrds[0] = int(float(activeCamera.distance*(float(worldXs[j]) / worldZs[j])));
+			screenPoints[j].coOrds[0] = int(float(activeCamera.distance*(float(worldXs[j]) / worldZs[j])))-int(sc.getWidth()/2);
 			//Y
-			screenPoints[j].coOrds[1] = int(float(activeCamera.distance*(float(worldYs[j]) / worldZs[j])));
+			screenPoints[j].coOrds[1] = int(float(activeCamera.distance*(float(worldYs[j]) / worldZs[j])))+int(sc.getHeight()/2);
 		}
 		//DOESNT LIKE IT WHEN X VALS ARE THE SAME
 		sc.drawDiagonal(screenPoints[0].coOrds[0], screenPoints[0].coOrds[1],

@@ -7,7 +7,6 @@
 #include "Utils.h"
 //ReSharper enable CppUnusedIncludeDirective
 
-const int tester = 2;
 
 
 int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
