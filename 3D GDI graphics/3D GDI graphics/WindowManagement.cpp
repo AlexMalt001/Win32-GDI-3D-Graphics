@@ -1,8 +1,10 @@
 #include <Windows.h>
+// ReSharper disable CppUnusedIncludeDirective
 #include <stdlib.h>
 #include "WindowManagement.h"
 #include <math.h>
 #include "Utils.h"
+//ReSharper enable CppUnusedIncludeDirective
 
 
 const LPCWCHAR g_szClassName = L"myWindowClass"; //name of window class - 'sz' = string, zero terminated
@@ -134,8 +136,8 @@ screen::screen(int _width, int _height, HWND hwnd) {
 	picHDC = CreateCompatibleDC(NULL);
 	BITMAPINFO bitmapinfo;
 	bitmapinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bitmapinfo.bmiHeader.biHeight = -512;
-	bitmapinfo.bmiHeader.biWidth = 512;
+	bitmapinfo.bmiHeader.biHeight = -1*(_height);
+	bitmapinfo.bmiHeader.biWidth = _width;
 	bitmapinfo.bmiHeader.biPlanes = 1;
 	bitmapinfo.bmiHeader.biBitCount = 32;
 	bitmapinfo.bmiHeader.biCompression = BI_RGB;
@@ -153,7 +155,7 @@ void screen::drawPx(int x, int y, DWORD colour) {
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 void screen::refresh() {
-	BitBlt(screenHDC, 0, 0, 512, 512, picHDC, 0, 0, SRCCOPY);
+	BitBlt(screenHDC, 0, 0, width, height, picHDC, 0, 0, SRCCOPY);
 }
 
 int screen::getHeight() const {

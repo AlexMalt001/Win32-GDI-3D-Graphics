@@ -91,6 +91,7 @@ class Object3D {
 
 class World : public CoOrdSysManager {
 public:
+	void setActiveCamera(Camera *newActiveCamera);
 	UniversalPoint createPoint(float x,float y, float  z);
 	UniversalPoint createPoint(Point point);
 	//TODO: 'createCamera();

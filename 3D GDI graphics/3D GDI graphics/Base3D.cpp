@@ -97,6 +97,10 @@ Point findIntersect() {
 	return Point(0, 0, 0);
 }
 
+void World::setActiveCamera(Camera* newActiveCamera) {
+	activeCamera = *newActiveCamera;
+}
+
 UniversalPoint World::createPoint(float x, float y, float z)
 {
 	println(systems.size());

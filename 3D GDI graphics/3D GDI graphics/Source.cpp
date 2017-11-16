@@ -17,7 +17,7 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (windowSuccess(hwnd) == false) {
 		return 0;
 	}
-	SetWindowPos(hwnd, NULL,10,10,512,512,SWP_NOMOVE);
+	SetWindowPos(hwnd, NULL,10,10,700,700,SWP_NOMOVE);
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
 
@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MSG Msg;
 
 	
-	screen sc(512, 512, hwnd);
+	screen sc(700, 700, hwnd);
 	
 	World mainWorld;
 	//TODO: center of camera is in top left. this is NFG.
@@ -124,7 +124,11 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//mainWorld.objects.push_back(obj);
 	mainWorld.objects.push_back(obj2);
 
+	/*Camera newCam = Camera(UniversalPoint(Point(0, 0, 0), &mainWorld), Angle(false, 90));
+	mainWorld.cameras.push_back(newCam);
+	mainWorld.setActiveCamera(&newCam);*/
 	mainWorld.draw(sc);
+
 
 	// ReSharper disable CppUnreachableCode
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
