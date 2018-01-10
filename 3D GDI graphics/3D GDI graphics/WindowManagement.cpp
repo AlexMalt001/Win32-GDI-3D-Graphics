@@ -136,8 +136,8 @@ screen::screen(int _width, int _height, HWND hwnd) {
 	picHDC = CreateCompatibleDC(NULL);
 	BITMAPINFO bitmapinfo;
 	bitmapinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bitmapinfo.bmiHeader.biHeight = -1*(_height);
-	bitmapinfo.bmiHeader.biWidth = _width;
+	bitmapinfo.bmiHeader.biHeight = (-1)*height;
+	bitmapinfo.bmiHeader.biWidth = width;
 	bitmapinfo.bmiHeader.biPlanes = 1;
 	bitmapinfo.bmiHeader.biBitCount = 32;
 	bitmapinfo.bmiHeader.biCompression = BI_RGB;
@@ -150,6 +150,7 @@ screen::screen(int _width, int _height, HWND hwnd) {
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 void screen::drawPx(int x, int y, DWORD colour) {
+
 	pixArray[(y*width) + x] = colour;
 }
 

@@ -7,8 +7,8 @@ using namespace utils;
 
 
 void Camera::calculateDistance(screen& sc) {
-	int height = sc.getHeight();
-	int angle = int(fov.getRads() / 2);
+	int height = sc.getHeight()/2;
+	float angle = fov.getRadsExact() / 2;
 
 	distance = float(height / tan(angle));
 }
