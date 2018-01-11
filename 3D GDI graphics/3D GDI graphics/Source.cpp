@@ -96,12 +96,12 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	testing::makeCube(mainWorld, -6, 0, 100, 6, 20, 100);
 
 	//camera not registering with co-ord-sys-manager
-	Camera newCam = Camera(UniversalPoint(Point(0, 0, 0), &mainWorld), Angle(false, 90), &mainWorld);
+	Camera newCam = Camera(UniversalPoint(Point(40, 0, 0), &mainWorld), Angle(false, 90), &mainWorld);
 	
 	mainWorld.cameras.push_back(newCam);
 	mainWorld.setActiveCamera(&newCam);
 	while (true) {
-		mainWorld.activeCamera.setOrigin(Point(40, 0, 0));
+		mainWorld.activeCamera.setOrigin(Point(mainWorld.activeCamera.getOrigin().globalPoint.coOrds[0]+1, 0, 0));
 		mainWorld.draw(sc);
 		Sleep(100);
 		sc.clear();
