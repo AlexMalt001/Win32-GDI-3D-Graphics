@@ -38,19 +38,19 @@ namespace utils {
 
 	class Angle {
 		public:
-			float getRadsExact() const;
-			float getRads() const;
-			float getDegs() const;
-			void setRads(float angle);
-			void setRadsExact(float angle);
-			void setDegs(float angle);
+			float getRadsExact() const; //get real radians, ie angleRads*PI
+			float getRads() const; //returns angleRads, ie radians/PI
+			float getDegs() const; //returns angle in degrees
+			void setRads(float angle); //sets angleRads and updates angleDegs. Input is in radians/PI
+			void setRadsExact(float angle); //sets angleRads and updates angleDegs. Input is in normal radians
+			void setDegs(float angle); //sets angleDegs and updates angleRads
 			Angle();
 			Angle(bool inRads, float value);
-			Angle operator=(const Angle &other);
+			Angle operator=(const Angle &other); 
 		private:
-			bool inRads = true;
-			float angleDegs = 0;
-			float angleRads = 0; //done between 0-2, not between 0-2PI, cause its nicer
+			bool inRads = true; //was the angle last set to radians or degrees?
+			float angleDegs = 0; //stores angle in degrees
+			float angleRads = 0; //angle stored as radians/PI, as it is easier to tell angle size
 	};
 
 	class Vec3 {
