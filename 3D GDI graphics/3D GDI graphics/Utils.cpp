@@ -51,5 +51,3 @@ void Angle::setDegs(float value) {
 	inRads = false;
 }
 
-//test
-

@@ -20,8 +20,7 @@ namespace utils {
 	}
 
 	static void println (const string output, false_type) { //non-numeric
-		/*basic_string<wchar_t> test = output;
-		OutputDebugStringW(test);*/
+
 		std::wstring_convert<codecvt_utf8_utf16<wchar_t>> converter;
 		wstring finalForm = converter.from_bytes(output);
 		OutputDebugStringW(finalForm.c_str());
@@ -71,8 +70,8 @@ namespace utils {
 	};
 
 	
-	static string intToStr(int Number) {
-		int test = Number;
+	static string intToStr(int number) {
+		int test = number;
 		stringstream ss;
 		ss.clear();
 		ss << test;

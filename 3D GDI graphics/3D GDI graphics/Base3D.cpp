@@ -205,11 +205,11 @@ void World::draw(screen sc) {
 		for (int j = 0; j <= 2; j++) { //for each vertex of the tri
 			println(workingFace.verts.size());
 			println(j);
-			facePoints[j]/**/ = workingFace.verts[j].getPoint(cameraId);
+			facePoints[j] = workingFace.verts[j].getPoint(cameraId);
 			worldXs[j] = facePoints[j].coOrds[0];
 			worldYs[j] = facePoints[j].coOrds[1];
 			worldZs[j] = facePoints[j].coOrds[2];
-			//j++;
+			
 		}
 		
 		Point screenPoints[3];
@@ -242,7 +242,6 @@ World::World() : activeCamera(*new Camera(UniversalPoint(Point(0,0,0), this), An
 	cameras.push_back(activeCamera);
 }
 
-//World::World() : activeCamera {}
 
 Face::Face(vector<UniversalPoint> _verts) {
 	verts = _verts;
@@ -262,7 +261,9 @@ float keepPositive(float input) {
 		return input;
 }
 
+// ReSharper disable CppInconsistentNaming
 Point UniversalPoint::getPoint(int _Id) {
+	// ReSharper restore CppInconsistentNaming
 	CoOrdinateSystem target = (*coOrdManager).systems[_Id];
 	Point origin = target.origin;
 	Point workingPoint = Point(globalPoint.coOrds[0] - origin.coOrds[0], globalPoint.coOrds[1] - origin.coOrds[1], globalPoint.coOrds[2] - origin.coOrds[2]); 
@@ -354,4 +355,3 @@ CoOrdinateSystem & CoOrdinateSystem::operator=(CoOrdinateSystem newCoOrdinateSys
 	swap(origin, c.origin);
 	return *this;
 }
-//test

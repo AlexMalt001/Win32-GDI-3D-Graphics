@@ -69,6 +69,7 @@ namespace testing {
 	}
 }
 
+// ReSharper disable once CppInconsistentNaming
 int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	int width = 500;
 	int height = 500;

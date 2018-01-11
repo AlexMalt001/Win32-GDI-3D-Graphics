@@ -101,4 +101,3 @@ public:
 	void draw(screen sc);
 	World();
 };
-//test
