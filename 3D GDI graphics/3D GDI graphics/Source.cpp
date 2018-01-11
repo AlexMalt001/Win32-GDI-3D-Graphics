@@ -88,10 +88,11 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	screen sc(width, height, hwnd);
 
 	World mainWorld;
-	testing::makeCube(mainWorld, 10, -40, 100, 30, 30, 30);
-	testing::makeCube(mainWorld, 10, 10, 100, 30, 30, 30);
-	testing::makeCube(mainWorld, -40, 10, 100, 30, 30, 30);
-	testing::makeCube(mainWorld, -40, -40, 100, 30, 30, 30);
+	testing::makeCube(mainWorld, 40, -30, 100, 30, 30, 30);
+	testing::makeCube(mainWorld, 40, 0, 130, 30, 30, 30);
+	testing::makeCube(mainWorld, 20, 0, 160, 30, 30, 30);
+	testing::makeCube(mainWorld, 20, -30, 190, 30, 30, 30);
+	testing::makeCube(mainWorld, 40, -30, 220, 30, 30, 30);
 	
 
 	sc.drawDiagonal(0, 0, width, height, 0x00FF00);

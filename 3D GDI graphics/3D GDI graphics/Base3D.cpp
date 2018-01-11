@@ -129,7 +129,7 @@ void World::draw(screen sc) {
 	}
 
 	//CODE TO BREAK DOWN EACH FACE INTO TRIANGLES
-	vector<Face> improvedFaces; //vector that will contain the newly broken down face
+	vector<Face> triangulatedFaces; //vector that will contain the newly broken down face
 	i = 0;
 	while (i < faces.size()) { //for every face
 		if (faces[i].verts.size() > 3) { //face only needs to be processed if it is not already a tri
@@ -149,12 +149,12 @@ void World::draw(screen sc) {
 				points[2] = thirdVert;
 
 				//create a new face from the point vector, then add it to the vector of processed faces
-				improvedFaces.push_back(Face(points));
+				triangulatedFaces.push_back(Face(points));
 				j++;
 			}
 		}
 		else {
-			improvedFaces.push_back(faces[i]); //add the face to the vector of tris if it is already a tri
+			triangulatedFaces.push_back(faces[i]); //add the face to the vector of tris if it is already a tri
 		}
 		i = i + 1;
 	}
@@ -163,28 +163,28 @@ void World::draw(screen sc) {
 	int cameraId = activeCamera.id;
 	vector<Face> visibleFaces; //a vector that will contain all faces that can be seen by the Camera
 	i = 0;
-	while(i<improvedFaces.size()) { //for every face
+	while(i<triangulatedFaces.size()) { //for every face
 		bool visible = false; //a variable that will be changed to determine whether or not part of the face is visible
 		int j = 0;
-		while(j < improvedFaces[i].verts.size()) { //for every vertex of the face
+		while(j < triangulatedFaces[i].verts.size()) { //for every vertex of the face
 
 			if (!visible) { //if one vertex of the face has been found to be visible, at least some part of the face is visible, therefore the other points dont need to be checked
-				Point p = improvedFaces[i].verts[j].getPoint(cameraId);
+				Point p = triangulatedFaces[i].verts[j].getPoint(cameraId);
 				
 				//find polar co-ordinate style angles for each point
-				Angle xyTheta = Angle(true, float(atan(improvedFaces[i].verts[j].getPoint(cameraId).coOrds[1] / improvedFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI));
-				Angle xzTheta = Angle(true, float(atan(improvedFaces[i].verts[j].getPoint(cameraId).coOrds[2] / improvedFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI));
+				Angle xyTheta = Angle(true, float(atan(triangulatedFaces[i].verts[j].getPoint(cameraId).coOrds[1] / triangulatedFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI));
+				Angle xzTheta = Angle(true, float(atan(triangulatedFaces[i].verts[j].getPoint(cameraId).coOrds[2] / triangulatedFaces[i].verts[j].getPoint(cameraId).coOrds[0])/M_2_PI));
 				
-				//readability stuff \/
+				//vars made local for convenience \/
 				float fovRads = activeCamera.fov.getRads();
 				float &camDist = activeCamera.distance;
 				int scHeight = sc.getHeight();
 
 				//check if polar co-ordinates of the point are (not) within the fov of the Camera
-				if (fovRads / 2*-1 > xzTheta.getRads() && xzTheta.getRads() > fovRads / 2 &&
-					atan(camDist / scHeight)*-1 > xyTheta.getRads() && xyTheta.getRads() > atan(camDist / scHeight)) {
-				} else { //if they are (ie not not) then a part of the face is definitely visible
-					visible = true;
+				if (!(fovRads / 2*-1 > xzTheta.getRads() && xzTheta.getRads() > fovRads / 2 &&
+					atan(camDist / scHeight)*-1 > xyTheta.getRads() && xyTheta.getRads() > atan(camDist / scHeight))) {
+	
+					visible = true; //if they are within the camera's FOV range, set them to visible
 				}
 			}
 			j++;
@@ -192,7 +192,7 @@ void World::draw(screen sc) {
 		if (visible) {
 			
 			//if the face is visible, add the face to a list of visible faces
-			visibleFaces.push_back(improvedFaces[i]);
+			visibleFaces.push_back(triangulatedFaces[i]);
 		}
 		i++;
 	}
@@ -201,25 +201,31 @@ void World::draw(screen sc) {
 	while( i < visibleFaces.size()) { //for every visible face
 		Face workingFace = visibleFaces[i]; //store the face currently being worked on
 		vector<Point> facePoints(3); //vector of the Face's vertices
-		float worldXs[3], worldYs[3], worldZs[3]; //
+		float worldXs[3], worldYs[3], worldZs[3]; //create an an array for the point in the world of each vert of the tri
 		for (int j = 0; j <= 2; j++) { //for each vertex of the tri
-			println(workingFace.verts.size());
-			println(j);
-			facePoints[j] = workingFace.verts[j].getPoint(cameraId);
+			facePoints[j] = workingFace.verts[j].getPoint(cameraId); //get the vertex we are working on from the camera's perspective
+			
+			//add each x,y,z to array of xs, ys and zs of the tri
 			worldXs[j] = facePoints[j].coOrds[0];
 			worldYs[j] = facePoints[j].coOrds[1];
 			worldZs[j] = facePoints[j].coOrds[2];
 			
 		}
 		
-		Point screenPoints[3];
-		activeCamera.calculateDistance(sc);
+
+		//DRAWING CODE
+		Point screenPoints[3]; //array to hold the onscreen location of each vert of the current tri
+		activeCamera.calculateDistance(sc);//refresh distance between camera and viewing plane
+
+		//find the intersection of the ray from each vert to the camera point with the viewing plane
 		for (int j = 0; j <= 2; j++) {
 			//X
 			screenPoints[j].coOrds[0] = int(float(activeCamera.distance*(float(worldXs[j]) / worldZs[j])))-int(sc.getWidth()/2);
 			//Y
 			screenPoints[j].coOrds[1] = int(float(activeCamera.distance*(float(worldYs[j]) / worldZs[j])))+int(sc.getHeight()/2);
 		}
+
+		//draw the object
 		//DOESNT LIKE IT WHEN X VALS ARE THE SAME
 		sc.drawDiagonal(screenPoints[0].coOrds[0], screenPoints[0].coOrds[1],
 			screenPoints[1].coOrds[0], screenPoints[1].coOrds[1], 0xFFFFFF);
@@ -227,6 +233,7 @@ void World::draw(screen sc) {
 			screenPoints[2].coOrds[0], screenPoints[2].coOrds[1], 0xFFFFFF);
 		sc.drawDiagonal(screenPoints[1].coOrds[0], screenPoints[1].coOrds[1],
 			screenPoints[2].coOrds[0], screenPoints[2].coOrds[1], 0xFFFFFF);
+		//highlight each corner, for testing
 		sc.drawPx(screenPoints[0].coOrds[0], screenPoints[0].coOrds[1], 0x00FFFF);
 		sc.drawPx(screenPoints[1].coOrds[0], screenPoints[1].coOrds[1], 0xFFFFFF);
 		sc.drawPx(screenPoints[2].coOrds[0], screenPoints[2].coOrds[1], 0x0000FF);
