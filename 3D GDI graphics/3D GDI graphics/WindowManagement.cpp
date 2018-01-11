@@ -30,6 +30,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 void screen::drawDiagonal(int x1, int y1, int x2, int y2, DWORD colour) {
+
 	if (y1 != y2) {
 		if (x1 != x2) {
 			//TODO: good AA
@@ -38,7 +39,7 @@ void screen::drawDiagonal(int x1, int y1, int x2, int y2, DWORD colour) {
 			int lesserX = (x1 > x2) ? x2 : x1;
 			int lesserY = (x1 > x2) ? y2 : y1;
 
-			float deriv = float(greaterY - lesserY) / (greaterX - lesserX);
+			float deriv = float(greaterY - lesserY) / (greaterX - lesserX);//find dy/dx of line
 
 			float remainingY = deriv;
 			int currentX = 0;
@@ -129,6 +130,14 @@ bool windowSuccess(HWND hwnd) {
 	}
 }
 
+void screen::clear() {
+	for (int i = 0; i < width; i++) {
+		for(int j = 0; j<height;j++) {
+			drawPx(i, j, 0x000000);
+		}
+	}
+}
+
 screen::screen(int _width, int _height, HWND hwnd) {
 	width = _width;
 	height = _height;
@@ -150,8 +159,9 @@ screen::screen(int _width, int _height, HWND hwnd) {
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 void screen::drawPx(int x, int y, DWORD colour) {
-
-	pixArray[(y*width) + x] = colour;
+	if (y > 0 && y<height) {
+		pixArray[(y*width) + x] = colour;
+	}
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst

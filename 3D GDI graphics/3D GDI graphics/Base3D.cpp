@@ -13,27 +13,27 @@ void Camera::calculateDistance(screen& sc) {
 	distance = float(height / tan(angle));
 }
 
-CoOrdSysManager::CoOrdSysManager() : systems(*new vector<CoOrdinateSystem>(1)), globalCoOrdinateSystem(systems[0]) {
+CoOrdSysManager::CoOrdSysManager() : systems(*new vector<CoOrdinateSystem>(1)){
+	globalCoOrdinateSystem = &systems[0];
 	clearSpots = vector<int>(0);
 	systems[0].id = 0;
 	systems[0].origin = Point(0, 0, 0);
 }
 
-Camera::Camera(UniversalPoint _origin, Angle _fov) {
-	origin = _origin;
-	fov = _fov;
-	int test = (*origin.coOrdManager).newCoOrdSys(origin.globalPoint);
-	id = test;
+void Camera::setOrigin(Point p) {
+	(*world).setSystemOrigin(id, p);
 }
 
-Camera::Camera() {
+Camera::Camera(UniversalPoint _origin, Angle _fov, World* newWorld) : WorldObject(newWorld) {
+	fov = _fov;
+	id = (*_origin.coOrdManager).newCoOrdSys(_origin.globalPoint);
+}
+
+Camera::Camera() : WorldObject(){
 }
 
 void UniversalPoint::transform(Vec3 transformVector) {
 	globalPoint.transform(transformVector);
-	for (int i = 0; i < children.size(), i++;) {
-		children[i].refresh(globalPoint);
-	}
 }
 
 
@@ -71,21 +71,7 @@ Point::Point(float x, float y, float z, Angle xRot, Angle yRot, Angle zRot)
 }
 
 
-//TODO:work out what this is
-//TODO: remove this tag once no longer testing
-// ReSharper disable once CppMemberFunctionMayBeStatic
-void Point::refresh(Point globalPoint) const {
-	Vec3 transformationVector;
-	float test1 = globalPoint.coOrds[0];
-	Point test2(0, 0, 0);
-	float test4 = test2.coOrds[0];
-	float test3 = test1 - test4;
-	transformationVector.x = test3;
-}
-
-
-
-childCoOrdSys::childCoOrdSys(CoOrdinateSystem &_parent, Point _origin, int _Id) : parent(_parent) {
+childCoOrdSys::childCoOrdSys(CoOrdinateSystem* _parent, Point _origin, int _Id) : parent(_parent) {
 	origin = _origin;
 	id = _Id;
 	//TODO: register with coOrdSysManager?
@@ -220,13 +206,13 @@ void World::draw(screen sc) {
 		//find the intersection of the ray from each vert to the camera point with the viewing plane
 		for (int j = 0; j <= 2; j++) {
 			//X
-			screenPoints[j].coOrds[0] = int(float(activeCamera.distance*(float(worldXs[j]) / worldZs[j])))-int(sc.getWidth()/2);
+			screenPoints[j].coOrds[0] = int(float(activeCamera.distance*(float(worldXs[j]) / worldZs[j])))+int(sc.getWidth()/2);
 			//Y
+
 			screenPoints[j].coOrds[1] = int(float(activeCamera.distance*(float(worldYs[j]) / worldZs[j])))+int(sc.getHeight()/2);
 		}
 
 		//draw the object
-		//DOESNT LIKE IT WHEN X VALS ARE THE SAME
 		sc.drawDiagonal(screenPoints[0].coOrds[0], screenPoints[0].coOrds[1],
 			screenPoints[1].coOrds[0], screenPoints[1].coOrds[1], 0xFFFFFF);
 		sc.drawDiagonal(screenPoints[0].coOrds[0], screenPoints[0].coOrds[1],
@@ -245,7 +231,7 @@ void World::draw(screen sc) {
 }
 
 
-World::World() : activeCamera(*new Camera(UniversalPoint(Point(0,0,0), this), Angle(true,90))) {
+World::World() : activeCamera(*new Camera(  UniversalPoint(Point(0,0,0), this)  , Angle(true,90)  , this)) {
 	cameras.push_back(activeCamera);
 }
 
@@ -271,7 +257,7 @@ float keepPositive(float input) {
 // ReSharper disable CppInconsistentNaming
 Point UniversalPoint::getPoint(int _Id) {
 	// ReSharper restore CppInconsistentNaming
-	CoOrdinateSystem target = (*coOrdManager).systems[_Id];
+	CoOrdinateSystem target = (*coOrdManager).getSystem(_Id);
 	Point origin = target.origin;
 	Point workingPoint = Point(globalPoint.coOrds[0] - origin.coOrds[0], globalPoint.coOrds[1] - origin.coOrds[1], globalPoint.coOrds[2] - origin.coOrds[2]); 
 
@@ -335,6 +321,18 @@ Point UniversalPoint::getPoint(int _Id) {
 	return workingPoint;
 }
 
+WorldObject::WorldObject(World* newWorld) {
+	world = newWorld;
+}
+
+void WorldObject::setWorld(World* newWorld) {
+	world = newWorld;
+}
+
+UniversalPoint Camera::getOrigin() {
+	return UniversalPoint((*world).getSystem(id).origin,world);
+}
+
 int CoOrdSysManager::newCoOrdSys(Point origin)
 {
 	int id;
@@ -353,6 +351,14 @@ void CoOrdSysManager::removeCoOrdSys(int id)
 	delete &systems[id];
 	systems[id] = CoOrdinateSystem();
 	clearSpots.push_back(id);
+}
+
+void CoOrdSysManager::setSystemOrigin(int id, Point p) {
+	systems[id].origin = p;
+}
+
+CoOrdinateSystem CoOrdSysManager::getSystem(int id) {
+	return systems[id];
 }
 
 CoOrdinateSystem & CoOrdinateSystem::operator=(CoOrdinateSystem newCoOrdinateSystem)

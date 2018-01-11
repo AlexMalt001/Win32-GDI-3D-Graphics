@@ -12,6 +12,8 @@
 using namespace utils;
 using namespace std;
 
+class World;
+
 class Point {
 public:
 	Point() {}
@@ -21,7 +23,6 @@ public:
 	Point(float x, float y, float z);
 	Point(float x, float y, float z, Angle xRot, Angle yRot, Angle zRot);
 	void transform(Vec3 transformVector);
-	void refresh(Point globalPoint) const;
 };
 
 class CoOrdinateSystem {
@@ -33,8 +34,8 @@ class CoOrdinateSystem {
 
 class childCoOrdSys : public CoOrdinateSystem{
 	public:
-		CoOrdinateSystem &parent;
-		childCoOrdSys(CoOrdinateSystem &parent, Point origin, int Id);
+		CoOrdinateSystem* parent;
+		childCoOrdSys(CoOrdinateSystem* parent, Point origin, int Id);
 };
 
 class CoOrdSysManager {
@@ -43,9 +44,12 @@ class CoOrdSysManager {
 		int newCoOrdSys(Point origin);
 		//TODO: 'updateSys(id);
 		void removeCoOrdSys(int id);
-		vector<int> clearSpots; 
+		CoOrdinateSystem* globalCoOrdinateSystem;
+		void setSystemOrigin(int id, Point p);
+		CoOrdinateSystem getSystem(int id);
+	protected:
+		vector<int> clearSpots;
 		vector <CoOrdinateSystem> systems;
-		CoOrdinateSystem &globalCoOrdinateSystem;
 };
 
 class UniversalPoint { //TODO: inherit from Point
@@ -60,17 +64,27 @@ private:
 	vector<Point> children;
 };
 
-class Camera {
+class WorldObject {
+	protected:
+		World* world;
+		WorldObject(World* newWorld);
+		WorldObject() : world(nullptr) {} ;
+		void setWorld(World* newWorld);
+};
+
+class Camera : WorldObject{
 public: //TODO: the encapsulation in this is actually painful
 	//childCoOrdSys cameraCoOrdSys;
-	UniversalPoint origin;
+	
+	UniversalPoint getOrigin();
 	float distance = 0.0; 
 	Angle fov;
 	void calculateDistance(screen& sc);
 	int id = 0;
+	void setOrigin(Point p);
 
 	//TODO: constructors only for World
-	/*protected*/Camera(UniversalPoint origin, Angle fov);
+	/*protected*/Camera(UniversalPoint origin, Angle fov, World* newWorld);
 	/*protected*/Camera();
 };
 

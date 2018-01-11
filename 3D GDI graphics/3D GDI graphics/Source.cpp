@@ -88,23 +88,28 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	screen sc(width, height, hwnd);
 
 	World mainWorld;
-	testing::makeCube(mainWorld, 40, -30, 100, 30, 30, 30);
-	testing::makeCube(mainWorld, 40, 0, 130, 30, 30, 30);
-	testing::makeCube(mainWorld, 20, 0, 160, 30, 30, 30);
-	testing::makeCube(mainWorld, 20, -30, 190, 30, 30, 30);
-	testing::makeCube(mainWorld, 40, -30, 220, 30, 30, 30);
-	
+	//testing::makeCube(mainWorld, 40, -30, 100, 30, 30, 30);
+	//testing::makeCube(mainWorld, 40, 0, 130, 30, 30, 30);
+	//testing::makeCube(mainWorld, 20, 0, 160, 30, 30, 30);
+	//testing::makeCube(mainWorld, 20, -30, 190, 30, 30, 30);
+	//testing::makeCube(mainWorld, 40, -30, 220, 30, 30, 30);
+	testing::makeCube(mainWorld, -6, 0, 100, 6, 20, 100);
 
-	sc.drawDiagonal(0, 0, width, height, 0x00FF00);
-	sc.drawPx(width/2, height/2, 0xFF0000);
-	sc.refresh();
 	//camera not registering with co-ord-sys-manager
-	Camera newCam = Camera(UniversalPoint(Point(0, 0, 0), &mainWorld), Angle(false, 90));
+	Camera newCam = Camera(UniversalPoint(Point(0, 0, 0), &mainWorld), Angle(false, 90), &mainWorld);
+	
 	mainWorld.cameras.push_back(newCam);
 	mainWorld.setActiveCamera(&newCam);
-	mainWorld.draw(sc);
+	while (true) {
+		mainWorld.activeCamera.setOrigin(Point(40, 0, 0));
+		mainWorld.draw(sc);
+		Sleep(100);
+		sc.clear();
+	}
+	
 
-
+	sc.drawPx((width / 2), height / 2, 0xFF0000);
+	sc.refresh();
 	// ReSharper disable CppUnreachableCode
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
