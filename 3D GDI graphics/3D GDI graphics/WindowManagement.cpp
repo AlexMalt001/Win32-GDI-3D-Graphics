@@ -131,7 +131,7 @@ bool windowSuccess(HWND hwnd) {
 }
 
 void screen::clear() {
-	for (int i = 0; i < width; i++) {
+	for (int i = 0; i < width;i++) {
 		for(int j = 0; j<height;j++) {
 			drawPx(i, j, 0x000000);
 		}
@@ -143,6 +143,7 @@ screen::screen(int _width, int _height, HWND hwnd) {
 	height = _height;
 	screenHDC = GetDC(hwnd);
 	picHDC = CreateCompatibleDC(NULL);
+	blankHDC = CreateCompatibleDC(NULL);
 	BITMAPINFO bitmapinfo;
 	bitmapinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bitmapinfo.bmiHeader.biHeight = (-1)*height;
@@ -153,7 +154,9 @@ screen::screen(int _width, int _height, HWND hwnd) {
 
 	// ReSharper disable once CppCStyleCast
 	HBITMAP bmp = CreateDIBSection(picHDC, &bitmapinfo, DIB_RGB_COLORS, (VOID**)&pixArray, 0, 0);
-
+	// ReSharper disable once CppCStyleCast
+	HBITMAP blankbmp = CreateDIBSection(blankHDC, &bitmapinfo, DIB_RGB_COLORS, (VOID**)&blank, 0, 0);
+	HBITMAP bmpblankold = (HBITMAP(SelectObject(blankHDC, blankbmp)));
 	HBITMAP bmpold = (HBITMAP(SelectObject(picHDC, bmp)));
 }
 

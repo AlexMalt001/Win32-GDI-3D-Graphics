@@ -19,6 +19,8 @@ class screen {
 	private:
 		int width, height;
 		DWORD* pixArray;
+		DWORD* blank;
 		HDC screenHDC;
 		HDC picHDC;
+		HDC blankHDC;
 };

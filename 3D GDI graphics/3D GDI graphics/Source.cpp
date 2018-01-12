@@ -5,10 +5,23 @@
 #include "3DComponents.h"
 #include "Base3D.h"
 #include "Utils.h"
+
+
 //ReSharper enable CppUnusedIncludeDirective
 
 //draw test objects
 namespace testing {
+	/*void runTests(World& mainWorld, screen& sc) {
+		while (true) {
+			Sleep(100);
+			sc.clear();
+			mainWorld.activeCamera.setOrigin(Point(mainWorld.activeCamera.getOrigin().globalPoint.coOrds[0] + 1, 0, 0));
+			mainWorld.draw(sc);
+			
+		}
+
+	}*/
+
 	void makeCube(World &mainWorld, int x, int y, int z, int width, int height, int depth) {
 		Point frontTopLeft		= Point(x,		 y,			z);
 		Point frontTopRight		= Point(x+width, y,			z);
@@ -69,6 +82,34 @@ namespace testing {
 	}
 }
 
+typedef struct MyData{
+	screen* sc;
+	World* mainWorld;
+	MyData(screen* _sc, World* _mainWorld) {
+		sc = _sc;
+		mainWorld = _mainWorld;
+	}
+}MYDATA;
+
+void clear(screen& sc) {
+	sc.clear();
+}
+
+DWORD WINAPI mythread(__in LPVOID lpParameter) {
+	MYDATA data = *((MYDATA*)lpParameter);
+	while(true) {
+		Sleep(100);
+		(*data.sc).clear();
+		(*data.mainWorld).activeCamera.setOrigin(Point((*data.mainWorld).activeCamera.getOrigin().globalPoint.coOrds[0] + 1, 0, 0));
+		clear(*data.sc);
+		(*data.mainWorld).draw(*data.sc);
+		
+		(*data.sc).refresh();
+	}
+	return 0;
+}
+
+
 // ReSharper disable once CppInconsistentNaming
 int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	int width = 500;
@@ -93,30 +134,37 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//testing::makeCube(mainWorld, 20, 0, 160, 30, 30, 30);
 	//testing::makeCube(mainWorld, 20, -30, 190, 30, 30, 30);
 	//testing::makeCube(mainWorld, 40, -30, 220, 30, 30, 30);
-	testing::makeCube(mainWorld, -6, 0, 100, 6, 20, 100);
+	testing::makeCube(mainWorld, 20, 30, 100, 20, 20, 20);
 
 	//camera not registering with co-ord-sys-manager
 	Camera newCam = Camera(UniversalPoint(Point(40, 0, 0), &mainWorld), Angle(false, 90), &mainWorld);
 	
 	mainWorld.cameras.push_back(newCam);
 	mainWorld.setActiveCamera(&newCam);
-	while (true) {
-		mainWorld.activeCamera.setOrigin(Point(mainWorld.activeCamera.getOrigin().globalPoint.coOrds[0]+1, 0, 0));
-		mainWorld.draw(sc);
-		Sleep(100);
-		sc.clear();
-	}
-	
+	mainWorld.draw(sc);
 
 	sc.drawPx((width / 2), height / 2, 0xFF0000);
 	sc.refresh();
 	// ReSharper disable CppUnreachableCode
+	MYDATA dataptr(&sc, &mainWorld);
+	
+	DWORD mythreadid;
+	CreateThread(0, 0, mythread, &dataptr, 0, &mythreadid);
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
+		
+		/*Sleep(100);
+		sc.clear();
+		mainWorld.activeCamera.setOrigin(Point(mainWorld.activeCamera.getOrigin().globalPoint.coOrds[0] + 1, 0, 0));
+		mainWorld.draw(sc);
+		sc.clear();
+		sc.refresh();*/
 		TranslateMessage(&Msg);
 		DispatchMessage(&Msg);
 	}
+
 	return int(Msg.wParam);
 	// ReSharper restore CppUnreachableCode
+
 }
 
