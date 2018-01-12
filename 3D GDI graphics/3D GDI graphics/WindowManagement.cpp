@@ -162,7 +162,7 @@ screen::screen(int _width, int _height, HWND hwnd) {
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 void screen::drawPx(int x, int y, DWORD colour) {
-	if (y > 0 && y<height) {
+	if (y > 0 && y<height && x>0 && x<width) {
 		pixArray[(y*width) + x] = colour;
 	}
 }
