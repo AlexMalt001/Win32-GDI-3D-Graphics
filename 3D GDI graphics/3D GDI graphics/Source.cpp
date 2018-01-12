@@ -5,6 +5,7 @@
 #include "3DComponents.h"
 #include "Base3D.h"
 #include "Utils.h"
+#include "World.h"
 
 
 //ReSharper enable CppUnusedIncludeDirective

@@ -213,6 +213,7 @@
     <ClCompile Include="RenderHelpTools.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="WindowManagement.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3DComponents.h" />
@@ -222,6 +223,7 @@
     <ClInclude Include="RenderHelpTools.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="WindowManagement.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

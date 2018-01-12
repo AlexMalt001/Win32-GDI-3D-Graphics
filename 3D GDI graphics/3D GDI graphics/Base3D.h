@@ -8,13 +8,18 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Point.h"
+
 // ReSharper restore CppUnusedIncludeDirective
+
+namespace base3D {
+	class World;//forward declare base3D::World; this class is necessarily loaded before it
+}
 
 using namespace base3D;
 using namespace utils;
 using namespace std;
 
-class World;
+//class base3D::World;
 
 class CoOrdinateSystem {
 	public:
@@ -57,10 +62,10 @@ private:
 
 class WorldObject {
 	protected:
-		World* world;
-		WorldObject(World* newWorld);
+		base3D::World* world;
+		WorldObject(base3D::World* newWorld);
 		WorldObject() : world(nullptr) {} ;
-		void setWorld(World* newWorld);
+		void setWorld(base3D::World* newWorld);
 };
 
 class Camera : WorldObject{
@@ -92,17 +97,4 @@ class Object3D {
 		vector<Face> faces;
 		Point CoG;
 		//TODO: add texturing stuff
-};
-
-class World : public CoOrdSysManager {
-public:
-	void setActiveCamera(Camera *newActiveCamera);
-	UniversalPoint createPoint(float x,float y, float  z);
-	UniversalPoint createPoint(Point point);
-	//TODO: 'createCamera();
-	vector<Camera> cameras;
-	vector<Object3D> objects;
-	Camera &activeCamera;
-	void draw(screen sc);
-	World();
 };
