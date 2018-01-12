@@ -1,5 +1,5 @@
 #pragma once
-#define ThreeDVertDims 3
+
 #include "Utils.h"
 #include <vector>
 #include "WindowManagement.h"
@@ -7,23 +7,14 @@
 #include "3DComponents.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include "Point.h"
 // ReSharper restore CppUnusedIncludeDirective
 
+using namespace base3D;
 using namespace utils;
 using namespace std;
 
 class World;
-
-class Point {
-public:
-	Point() {}
-	Point& operator=(Point point);
-	float coOrds[ThreeDVertDims];
-	Angle rotation[ThreeDVertDims];
-	Point(float x, float y, float z);
-	Point(float x, float y, float z, Angle xRot, Angle yRot, Angle zRot);
-	void transform(Vec3 transformVector);
-};
 
 class CoOrdinateSystem {
 	public:

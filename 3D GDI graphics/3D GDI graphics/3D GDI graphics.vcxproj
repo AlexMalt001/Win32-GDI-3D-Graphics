@@ -207,6 +207,7 @@
   <ItemGroup>
     <ClCompile Include="3DComponents.cpp" />
     <ClCompile Include="clickHandler.cpp" />
+    <ClCompile Include="Point.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Base3D.cpp" />
     <ClCompile Include="RenderHelpTools.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="3DComponents.h" />
     <ClInclude Include="Base3D.h" />
     <ClInclude Include="clickHandler.h" />
+    <ClInclude Include="Point.h" />
     <ClInclude Include="RenderHelpTools.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="WindowManagement.h" />

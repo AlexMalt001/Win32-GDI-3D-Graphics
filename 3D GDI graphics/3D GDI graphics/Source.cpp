@@ -137,7 +137,7 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	testing::makeCube(mainWorld, 20, 30, 100, 20, 20, 20);
 
 	//camera not registering with co-ord-sys-manager
-	Camera newCam = Camera(UniversalPoint(Point(40, 0, 0), &mainWorld), Angle(false, 90), &mainWorld);
+	Camera newCam = Camera(UniversalPoint(Point(40, 0, 0 ,Angle(false,0), Angle(false, 0), Angle(false,0)), &mainWorld), Angle(false, 90), &mainWorld);
 	
 	mainWorld.cameras.push_back(newCam);
 	mainWorld.setActiveCamera(&newCam);
@@ -146,10 +146,12 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	sc.drawPx((width / 2), height / 2, 0xFF0000);
 	sc.refresh();
 	// ReSharper disable CppUnreachableCode
-	MYDATA dataptr(&sc, &mainWorld);
+
+	//MYDATA dataptr(&sc, &mainWorld);
+	//
+	//DWORD mythreadid;
+	//CreateThread(0, 0, mythread, &dataptr, 0, &mythreadid);
 	
-	DWORD mythreadid;
-	CreateThread(0, 0, mythread, &dataptr, 0, &mythreadid);
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
 		

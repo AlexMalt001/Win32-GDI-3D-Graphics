@@ -3,6 +3,8 @@
 #include <math.h>
 using namespace utils;
 
+
+
 Angle::Angle(): inRads(false) {} //default constructor. value of inRads does not matter at this point
 
 Angle Angle::operator=(const Angle &other) {
