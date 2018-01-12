@@ -60,29 +60,15 @@ private:
 	vector<Point> children;
 };
 
-class WorldObject {
+class WorldObject { //class from which all types that can exist in the world derive
 	protected:
-		base3D::World* world;
+		World* world;
 		WorldObject(base3D::World* newWorld);
 		WorldObject() : world(nullptr) {} ;
 		void setWorld(base3D::World* newWorld);
 };
 
-class Camera : WorldObject{
-public: //TODO: the encapsulation in this is actually painful
-	//childCoOrdSys cameraCoOrdSys;
-	
-	UniversalPoint getOrigin();
-	float distance = 0.0; 
-	Angle fov;
-	void calculateDistance(screen& sc);
-	int id = 0;
-	void setOrigin(Point p);
 
-	//TODO: constructors only for World
-	/*protected*/Camera(UniversalPoint origin, Angle fov, World* newWorld);
-	/*protected*/Camera();
-};
 
 class Face {
 	//TODO: add a back reference to the object the face belongs to for texturing

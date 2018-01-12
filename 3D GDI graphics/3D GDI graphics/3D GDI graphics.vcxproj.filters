@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Base3D">
-      <UniqueIdentifier>{c902cad0-5fdc-464d-998c-3b0ab74bfa6f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Windows">
       <UniqueIdentifier>{e7294937-8186-40d3-aeb8-195448d066d9}</UniqueIdentifier>
     </Filter>
@@ -24,6 +21,9 @@
     </Filter>
     <Filter Include="Source Files\base3D">
       <UniqueIdentifier>{e0ca8617-e9de-4f2b-9ca0-4abf75e254e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\base3D">
+      <UniqueIdentifier>{c902cad0-5fdc-464d-998c-3b0ab74bfa6f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,19 +54,22 @@
     <ClCompile Include="World.cpp">
       <Filter>Source Files\base3D</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\base3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base3D.h">
-      <Filter>Header Files\Base3D</Filter>
+      <Filter>Header Files\base3D</Filter>
     </ClInclude>
     <ClInclude Include="Point.h">
-      <Filter>Header Files\Base3D</Filter>
+      <Filter>Header Files\base3D</Filter>
     </ClInclude>
     <ClInclude Include="3DComponents.h">
-      <Filter>Header Files\Base3D</Filter>
+      <Filter>Header Files\base3D</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
-      <Filter>Header Files\Base3D</Filter>
+      <Filter>Header Files\base3D</Filter>
     </ClInclude>
     <ClInclude Include="clickHandler.h">
       <Filter>Header Files\Windows</Filter>
@@ -78,7 +81,10 @@
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="World.h">
-      <Filter>Header Files\Base3D</Filter>
+      <Filter>Header Files\base3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\base3D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #pragma once
 #include "WindowManagement.h"
 #include "Base3D.h"
+#include "Camera.h"
 
 
 

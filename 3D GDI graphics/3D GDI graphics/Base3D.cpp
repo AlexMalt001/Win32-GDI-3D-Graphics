@@ -9,14 +9,6 @@ using namespace utils;
 
 
 
-
-void Camera::calculateDistance(screen& sc) {
-	int height = sc.getHeight()/2;
-	float angle = fov.getRadsExact() / 2;
-
-	distance = float(height / tan(angle));
-}
-
 CoOrdSysManager::CoOrdSysManager() : systems(*new vector<CoOrdinateSystem>(1)){
 	globalCoOrdinateSystem = &systems[0];
 	clearSpots = vector<int>(0);
@@ -24,17 +16,8 @@ CoOrdSysManager::CoOrdSysManager() : systems(*new vector<CoOrdinateSystem>(1)){
 	systems[0].origin = Point(0, 0, 0);
 }
 
-void Camera::setOrigin(Point p) {
-	(*world).setSystemOrigin(id, p);
-}
 
-Camera::Camera(UniversalPoint _origin, Angle _fov, World* newWorld) : WorldObject(newWorld) {
-	fov = _fov;
-	id = (*_origin.coOrdManager).newCoOrdSys(_origin.globalPoint);
-}
 
-Camera::Camera() : WorldObject(){
-}
 
 void UniversalPoint::transform(Vec3 transformVector) {
 	globalPoint.transform(transformVector);
