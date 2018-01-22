@@ -76,3 +76,4 @@ Point UniversalPoint::getPoint(int _Id) {
 	children[_Id] = workingPoint;
 	return workingPoint;
 }
+

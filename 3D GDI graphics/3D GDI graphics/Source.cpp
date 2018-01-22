@@ -104,7 +104,7 @@ DWORD WINAPI mythread(__in LPVOID lpParameter) {
 	while(true) {
 		Sleep(100);
 		(*data.sc).clear();
-		(*data.mainWorld).activeCamera.setOrigin(Point((*data.mainWorld).activeCamera.getOrigin().globalPoint.coOrds[0] + 1, 0, 0));
+		(*data.mainWorld).objects[0].transform(Vec3(0,1,0));
 		clear(*data.sc);
 		(*data.mainWorld).draw(*data.sc);
 		
