@@ -1,4 +1,6 @@
 #include "World.h"
+#include "Face.h"
+#include "Object3D.h"
 
 using namespace base3D;
 

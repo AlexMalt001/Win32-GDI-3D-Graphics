@@ -6,13 +6,16 @@
 #include "Base3D.h"
 #include "Utils.h"
 #include "World.h"
+#include "Camera.h"
+#include "Face.h"
+#include "Object3D.h"
 
 
 //ReSharper enable CppUnusedIncludeDirective
 
 //draw test objects
 namespace testing {
-	/*void runTests(World& mainWorld, screen& sc) {
+	void runTests(World& mainWorld, screen& sc) {
 		while (true) {
 			Sleep(100);
 			sc.clear();
@@ -21,7 +24,7 @@ namespace testing {
 			
 		}
 
-	}*/
+	}
 
 	void makeCube(World &mainWorld, int x, int y, int z, int width, int height, int depth) {
 		Point frontTopLeft		= Point(x,		 y,			z);
@@ -148,10 +151,10 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	sc.refresh();
 	// ReSharper disable CppUnreachableCode
 
-	//MYDATA dataptr(&sc, &mainWorld);
-	//
-	//DWORD mythreadid;
-	//CreateThread(0, 0, mythread, &dataptr, 0, &mythreadid);
+	MYDATA dataptr(&sc, &mainWorld);
+	
+	DWORD mythreadid;
+	CreateThread(0, 0, mythread, &dataptr, 0, &mythreadid);
 	
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
 	{

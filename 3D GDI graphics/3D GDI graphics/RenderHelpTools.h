@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Base3D.h"
+#include "Object3D.h"
 
 using namespace std;
 

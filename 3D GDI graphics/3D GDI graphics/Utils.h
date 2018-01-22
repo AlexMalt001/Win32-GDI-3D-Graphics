@@ -6,6 +6,12 @@
 using namespace std;
 
 namespace utils {
+	inline float keepPositive(float input) {
+		if (input < 0) {
+			return -input;
+		}
+		return input;
+	}
 	
 	template<class T>
 	static void println(T output, true_type) { //numeric

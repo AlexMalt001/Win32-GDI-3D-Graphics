@@ -1,5 +1,6 @@
 #pragma once
 #include "Base3D.h"
+#include "UniversalPoint.h"
 
 using namespace base3D;
 

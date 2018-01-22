@@ -1,9 +1,15 @@
 #include "Camera.h"
 #include "Base3D.h"
 #include "World.h"
+#include "UniversalPoint.h"
 
 
 using namespace base3D;
+
+UniversalPoint Camera::getOrigin() {
+	return UniversalPoint((*world).getSystem(id).origin, world);
+}
+
 
 void Camera::setOrigin(Point p) {
 	(*world).setSystemOrigin(id, p);

@@ -2,7 +2,7 @@
 #include "WindowManagement.h"
 #include "Base3D.h"
 #include "Camera.h"
-
+#include "Object3D.h"
 
 
 namespace base3D {

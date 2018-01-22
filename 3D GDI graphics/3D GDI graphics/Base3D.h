@@ -13,6 +13,7 @@
 
 namespace base3D {
 	class World;//forward declare base3D::World; this class is necessarily loaded before it
+	//class UniversalPoint;
 }
 
 using namespace base3D;
@@ -48,18 +49,6 @@ class CoOrdSysManager {
 		vector <CoOrdinateSystem> systems;
 };
 
-class UniversalPoint { //TODO: inherit from Point
-public:
-	UniversalPoint() = default;
-	CoOrdSysManager *coOrdManager;
-	Point globalPoint;
-	void transform(Vec3 transformVector);
-	UniversalPoint(Point _globalPoint, CoOrdSysManager *coOrdManager);
-	Point getPoint(int id);
-private:
-	vector<Point> children;
-};
-
 class WorldObject { //class from which all types that can exist in the world derive
 	protected:
 		World* world;
@@ -70,17 +59,5 @@ class WorldObject { //class from which all types that can exist in the world der
 
 
 
-class Face {
-	//TODO: add a back reference to the object the face belongs to for texturing
-	public:
-		vector<UniversalPoint> verts;//TODO:Pointerise
-		Face(vector<UniversalPoint> verts);
 
-};
 
-class Object3D {
-	public:
-		vector<Face> faces;
-		Point CoG;
-		//TODO: add texturing stuff
-};

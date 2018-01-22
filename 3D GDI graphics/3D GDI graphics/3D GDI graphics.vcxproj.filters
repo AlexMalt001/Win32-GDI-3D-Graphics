@@ -57,6 +57,15 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\base3D</Filter>
     </ClCompile>
+    <ClCompile Include="UniversalPoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Face.cpp">
+      <Filter>Source Files\base3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Object3D.cpp">
+      <Filter>Source Files\base3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base3D.h">
@@ -84,6 +93,15 @@
       <Filter>Header Files\base3D</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
+      <Filter>Header Files\base3D</Filter>
+    </ClInclude>
+    <ClInclude Include="UniversalPoint.h">
+      <Filter>Header Files\base3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Face.h">
+      <Filter>Header Files\base3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3D.h">
       <Filter>Header Files\base3D</Filter>
     </ClInclude>
   </ItemGroup>
