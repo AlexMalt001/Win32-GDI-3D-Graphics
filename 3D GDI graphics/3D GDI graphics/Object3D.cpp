@@ -11,3 +11,9 @@ void Object3D::transform(Vec3 transformationVector) {
 		faces[i].transform(transformationVector);
 	}
 }
+
+void Object3D::rotate(Point origin, Angle xyTheta, Angle yzTheta, Angle xzTheta) {
+	for (int i = 0; i < faces.size(); i++) {
+		faces[i].rotate(origin, xyTheta, yzTheta, xzTheta);
+	}
+}

@@ -3,6 +3,11 @@
 #include<Windows.h>
 #include <sstream>
 #include <codecvt>
+
+namespace base3D {
+	class Point;
+}
+
 using namespace std;
 
 namespace utils {
@@ -68,12 +73,11 @@ namespace utils {
 		float x = 0;
 		float y = 0;
 		float z = 0;
-		float xRot = 0;
-		float yRot = 0;
-		float zRot = 0;
 		//TODO: add constructor for rotation
 		Vec3() = default;
 	};
+
+
 
 	
 	static string intToStr(int number) {

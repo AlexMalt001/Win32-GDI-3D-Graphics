@@ -10,6 +10,7 @@ namespace base3D {
 		void transform(Vec3 transformationVector);
 
 	public:
+		void rotate(Point origin, Angle xyTheta, Angle yzTheta, Angle xzTheta);
 		vector<Face> faces;
 		Point CoG;
 

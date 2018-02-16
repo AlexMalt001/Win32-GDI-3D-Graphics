@@ -12,5 +12,6 @@ namespace base3D {
 		Point(float x, float y, float z);
 		Point(float x, float y, float z, Angle xRot, Angle yRot, Angle zRot);
 		void transform(Vec3 transformVector);
+		void rotate(Angle xyTheta, Angle yzTheta, Angle xzTheta);
 	};
 }

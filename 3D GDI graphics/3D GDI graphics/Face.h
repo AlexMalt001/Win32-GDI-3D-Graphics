@@ -12,6 +12,7 @@ namespace base3D {
 	public:
 		vector<UniversalPoint> verts;//TODO:Pointerise
 		Face(vector<UniversalPoint> verts);
+		void rotate(Point origin, Angle xyTheta, Angle yzTheta, Angle xzTheta);
 	protected:
 		void transform(Vec3 transformationVector);
 	};
