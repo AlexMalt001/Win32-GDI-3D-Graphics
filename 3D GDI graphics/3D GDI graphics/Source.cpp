@@ -104,7 +104,7 @@ DWORD WINAPI mythread(__in LPVOID lpParameter) {
 	while(true) {
 		Sleep(100);
 		(*data.sc).clear();
-		(*data.mainWorld).objects[0].rotate(Point(30,10,50), Angle(false, 0), Angle(false, 0),Angle(false,0));
+		(*data.mainWorld).objects[0].rotate(Point(0,0,0), Angle(false, 0), Angle(false, 0),Angle(false,3));
 		clear(*data.sc);
 		(*data.mainWorld).draw(*data.sc);
 		
@@ -138,7 +138,7 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//testing::makeCube(mainWorld, 20, 0, 160, 30, 30, 30);
 	//testing::makeCube(mainWorld, 20, -30, 190, 30, 30, 30);
 	//testing::makeCube(mainWorld, 40, -30, 220, 30, 30, 30);
-	testing::makeCube(mainWorld, 30, 30, 100, 20, 20, 20);
+	testing::makeCube(mainWorld, 30, 30, 50, 20, 20, 20);
 
 	//camera not registering with co-ord-sys-manager
 	Camera newCam = Camera(UniversalPoint(Point(0, 0, -100 ,Angle(false,0), Angle(false, 0), Angle(false,0)), &mainWorld), Angle(false, 90), &mainWorld);

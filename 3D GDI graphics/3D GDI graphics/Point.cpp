@@ -76,9 +76,9 @@ void Point::rotate(Angle xyTheta, Angle yzTheta, Angle xzTheta) {
 
 
 	//XY plane
-	vector<float> xy = rotate2D(x, -y, xyTheta);
+	vector<float> xy = rotate2D(x, y, xyTheta);
 	x = xy[0];
-	y = -xy[1];
+	y = xy[1];
 	//XZ plane
 	vector<float> xz = rotate2D(x, z, xzTheta);
 	x = xz[0];
