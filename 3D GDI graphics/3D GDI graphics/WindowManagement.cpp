@@ -30,55 +30,52 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 void screen::drawDiagonal(int x1, int y1, int x2, int y2, DWORD colour) {
+	int upperX = (x1>x2) ? x1:x2; //the leftmost coord
+	int lowerX = (x1>x2) ? x2:x1; //the rightmost coord
+	int upperY = (x1>x2) ? y1:y2; //the x coord that matches upperX
+	int lowerY = (x1>x2) ? y2:y1; //the y coord that matches lowerX
 
-	if (y1 != y2) {
-		if (x1 != x2) {
-			//TODO: good AA
-			int greaterX = (x1 > x2) ? x1 : x2;
-			int greaterY = (x1 > x2) ? y1 : y2;
-			int lesserX = (x1 > x2) ? x2 : x1;
-			int lesserY = (x1 > x2) ? y2 : y1;
+	double dydx = 0; //to hold the gradient
+	if(upperX-lowerX == 0) { //if the line is vertical
+		if(upperY < lowerY) { //sort the y coords, regardless of their x partner
+			int temp = lowerY;
+			lowerY = upperY;
+			upperY = temp;
+		}
 
-			float deriv = float(greaterY - lesserY) / (greaterX - lesserX);//find dy/dx of line
-
-			float remainingY = deriv;
-			int currentX = 0;
-			int currentY = 0;
-			while (currentX < greaterX - lesserX && currentY != greaterY - lesserY) {
-				drawPx(currentX + lesserX, currentY + lesserY, colour);
-				if (remainingY > 0.5) {
-					currentY++;
-					remainingY--;
-				}
-				else if (remainingY < -0.5) {
-
-					currentY--;
-					remainingY++;
-				}
-				else {
-					currentX++;
-					remainingY += deriv;
-				}
-
-			}
-		} else { //if same x coord
-			int greaterY = (y1 > y2) ? y1 : y2;
-			int lesserY = (y1 > y2) ? y2 : y1;
-
-			int currentY = 0;
-			while(currentY+lesserY != greaterY) {
-				drawPx(x1, currentY + lesserY, colour);
-				currentY++;
-			}
+		for(int i = lowerY; i<upperY; i++) { //for each y between the 2 coords
+			drawPx(lowerX, i, colour); //draw at the current coord
 		}
 	} else {
-		int greaterX = (x1 > x2) ? x1 : x2;
-		int lesserX = (x1 > x2) ? x2 : x1;
+		dydx = (float(upperY-lowerY))/(float(upperX-lowerX)); //gradient = deltaY/deltaX
+	}
 
-		int currentX = 0;
-		while (currentX + lesserX != greaterX) {
-			drawPx(currentX+lesserX,y1, colour);
-			currentX++;
+	float c = upperY - (dydx*upperX); //find term not in x, y=mx+c -> c=y-mx
+
+	if(upperY < lowerY) { //sort the y coords, regardless of their x partner
+		int temp = lowerY;
+		lowerY = upperY;
+		upperY = temp;
+	}
+	for(int currentX = lowerX; currentX <= upperX; currentX++) { //for each x coord in the row
+		int lowerYBound = int((dydx*(currentX - 0.5) + c >= lowerY) ? dydx*(currentX - 0.5) + c : lowerY); //lower bound covered by this x-pixel
+		int upperYBound = int((dydx*(currentX + 0.5) + c <= upperY) ? dydx*(currentX + 0.5) + c : upperY); //upper bound covered by this x-pixel
+
+		if(lowerYBound > upperYBound) { //sort bounds (messed up by -ve gradients)
+			int temp = lowerYBound;
+			lowerYBound = upperYBound;
+			upperYBound = temp;
+		}
+
+		if(lowerYBound <lowerY) { //constrain lower bound above provided minimum y value
+			lowerYBound = lowerY;
+		}
+		if(upperYBound > upperY) { //constrain upper bound below provided maximum y value
+			upperYBound =upperY;
+		}
+
+		for(int currentY = lowerYBound; currentY <= upperYBound; currentY++) { //for each y-pixel
+			drawPx(currentX, currentY, colour); //draw a pixel at the current position
 		}
 	}
 }
