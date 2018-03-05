@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>  
+    <VCTargetsPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets</VCTargetsPath>  
+  </PropertyGroup> 
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -27,7 +30,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
+    <VCProjectVersion>14.0</VCProjectVersion>
     <ProjectGuid>{013B46CA-E591-445B-81B6-244BC579CB40}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>My3DGDIgraphics</RootNamespace>
