@@ -50,7 +50,7 @@ void screen::drawDiagonal(int x1, int y1, int x2, int y2, DWORD colour) {
 		dydx = (float(upperY-lowerY))/(float(upperX-lowerX)); //gradient = deltaY/deltaX
 	}
 
-	float c = upperY - (dydx*upperX); //find term not in x, y=mx+c -> c=y-mx
+	float c = float(upperY - (dydx*upperX)); //find term not in x, y=mx+c -> c=y-mx
 
 	if(upperY < lowerY) { //sort the y coords, regardless of their x partner
 		int temp = lowerY;
@@ -100,7 +100,7 @@ WNDCLASSEX& createWindowClass(HINSTANCE hinstance) {
 		MessageBox(NULL, L"Window Registration Failed!", L"Error!",
 			MB_ICONEXCLAMATION | MB_OK);
 	}
-	return windowClass;
+	return *(new WNDCLASSEX(windowClass));
 }
 
 //TODO: Create window objects with OOP
