@@ -8,7 +8,7 @@ void UniversalPoint::transform(Vec3 transformVector) {
 UniversalPoint::UniversalPoint(Point _globalPoint, CoOrdSysManager *_coOrdManager)
 {
 	coOrdManager = _coOrdManager;
-	globalPoint = _globalPoint; //TODO: Pointerize
+	globalPoint = _globalPoint;
 }
 
 Point UniversalPoint::getPoint(int _Id) {
