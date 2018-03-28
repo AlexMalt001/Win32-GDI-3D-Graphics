@@ -23,7 +23,7 @@ UniversalPoint World::createPoint(Point point)
 	return UniversalPoint(point, this);
 }
 
-void World::draw(screen sc) {
+void World::draw(screen sc, int drawDist) {
 	activeCamera.calculateDistance(sc);
 	//REMOVE ALL FACES IN SCENE FROM THEIR ASSOCIATED OBJECTS
 	vector<Face> faces; //vector that will contain all faces in the world
@@ -82,24 +82,28 @@ void World::draw(screen sc) {
 			if (!visible) { //if one vertex of the face has been found to be visible, at least some part of the face is visible, therefore the other points dont need to be checked
 				Point p = triangulatedFaces[i].verts[j].getPoint(cameraId);
 
-				//find polar co-ordinate style angles for each point
-				Angle xyTheta = Angle(true, float(atan(triangulatedFaces[i].verts[j].getPoint(cameraId).coOrds[1] / triangulatedFaces[i].verts[j].getPoint(cameraId).coOrds[0]) / M_2_PI));
-				Angle xzTheta = Angle(true, float(atan(triangulatedFaces[i].verts[j].getPoint(cameraId).coOrds[2] / triangulatedFaces[i].verts[j].getPoint(cameraId).coOrds[0]) / M_2_PI));
+				if(p.coOrds[2] < drawDist) {
 
-				//vars made local for convenience \/
-				float fovRads = activeCamera.fov.getRads();
-				float &camDist = activeCamera.distance;
-				int scHeight = sc.getHeight();
+					//find polar co-ordinate style angles for each point
+					Angle xyTheta = Angle(true, float(atan(p.coOrds[1] / p.coOrds[0]) / M_2_PI));
+					Angle xzTheta = Angle(true, float(atan(p.coOrds[2] / p.coOrds[0]) / M_2_PI));
 
-				//check if polar co-ordinates of the point are (not) within the fov of the Camera
-				if (!(fovRads / 2 * -1 > xzTheta.getRads() && xzTheta.getRads() > fovRads / 2 &&
-					atan(camDist / scHeight)*-1 > xyTheta.getRads() && xyTheta.getRads() > atan(camDist / scHeight))) {
+					//vars made local for convenience \/
+					float fovRads = activeCamera.fov.getRads();
+					float &camDist = activeCamera.distance;
+					int scHeight = sc.getHeight();
 
-					visible = true; //if they are within the camera's FOV range, set them to visible
+					//check if polar co-ordinates of the point are (not) within the fov of the Camera
+					if (!(fovRads / 2 * -1 > xzTheta.getRads() && xzTheta.getRads() > fovRads / 2 &&
+						atan(camDist / scHeight)*-1 > xyTheta.getRads() && xyTheta.getRads() > atan(camDist / scHeight))) {
+
+						visible = true; //if they are within the camera's FOV range, set them to visible
+					}
 				}
 			}
 			j++;
 		}
+
 		if (visible) {
 
 			//if the face is visible, add the face to a list of visible faces

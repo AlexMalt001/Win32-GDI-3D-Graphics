@@ -20,7 +20,7 @@ namespace testing {
 			Sleep(10);
 			sc.clear();
 			mainWorld.activeCamera.setOrigin(Point(mainWorld.activeCamera.getOrigin().globalPoint.coOrds[0] + 1, 0, 0));
-			mainWorld.draw(sc);
+			mainWorld.draw(sc, 50);
 			
 		}
 
@@ -106,9 +106,12 @@ DWORD WINAPI mythread(__in LPVOID lpParameter) {
 		(*data.sc).clear();
 		(*data.mainWorld).objects[0].rotate(Point(0,0,0), Angle(false, 0), Angle(false, 0),Angle(false,3));
 		clear(*data.sc);
-		(*data.mainWorld).draw(*data.sc);
-		
+		int time = GetTickCount();
+		(*data.mainWorld).draw(*data.sc, 100);
+		int nextTime = GetTickCount();
+		long drawTime = nextTime - time;
 		(*data.sc).refresh();
+
 	}
 	return 0;
 }
@@ -145,7 +148,7 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	mainWorld.cameras.push_back(newCam);
 	mainWorld.setActiveCamera(&newCam);
-	mainWorld.draw(sc);
+	mainWorld.draw(sc, 500);
 
 	sc.drawPx((width / 2), height / 2, 0xFF0000);
 	sc.refresh();

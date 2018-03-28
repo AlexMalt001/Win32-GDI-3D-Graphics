@@ -15,7 +15,7 @@ namespace base3D {
 		vector<Camera> cameras;
 		vector<Object3D> objects;
 		Camera &activeCamera;
-		void draw(screen sc);
+		void draw(screen sc, int drawDist);
 		World();
 	};
 }
