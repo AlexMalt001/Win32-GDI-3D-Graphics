@@ -17,6 +17,12 @@ namespace base3D {
 		Camera &activeCamera;
 		void draw(screen sc, int drawDist);
 		World();
+	private:
+		vector<Face> seperateFaces();
+		vector<Face> triangulate(vector<Face> faces);
+		vector<Face> cullInvisible(vector<Face> faces, screen sc, int drawDist);
+		void drawProcessedFaces(vector<Face> faces, screen sc);
+		vector<Point> convertToScreenPoints(vector<Point> facePoints, screen sc);
 	};
 }
 

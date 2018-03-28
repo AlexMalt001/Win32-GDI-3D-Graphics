@@ -25,17 +25,18 @@ namespace testing {
 		}
 
 	}
+	
 
 	void makeCube(World &mainWorld, int x, int y, int z, int width, int height, int depth) {
-		Point frontTopLeft		= Point(x,		 y,			z);
-		Point frontTopRight		= Point(x+width, y,			z);
-		Point frontBottomRight	= Point(x+width, y+height,	z);
-		Point frontBottomLeft	= Point(x,		 y+height,	z);
+		Point frontTopLeft		= Point(float(x),		float(y),			float(z));
+		Point frontTopRight		= Point(float(x+width), float(y),			float(z));
+		Point frontBottomRight	= Point(float(x+width), float(y+height),	float(z));
+		Point frontBottomLeft	= Point(float(x),		float(y+height),	float(z));
 
-		Point backTopLeft		= Point(x,		 y,			z+depth);
-		Point backTopRight		= Point(x+width, y,			z+depth);
-		Point backBottomRight	= Point(x+width, y+height,	z+depth);
-		Point backBottomLeft	= Point(x,		 y+height,	z+depth);
+		Point backTopLeft		= Point(float(x),		 float(y),			float(z+depth));
+		Point backTopRight		= Point(float(x+width), float(y),			float(z+depth));
+		Point backBottomRight	= Point(float(x+width), float(y+height),	float(z+depth));
+		Point backBottomLeft	= Point(float(x),		 float(y+height),	float(z+depth));
 
 		//front
 		vector<UniversalPoint> frontFace;
@@ -106,10 +107,7 @@ DWORD WINAPI mythread(__in LPVOID lpParameter) {
 		(*data.sc).clear();
 		(*data.mainWorld).objects[0].rotate(Point(0,0,0), Angle(false, 0), Angle(false, 0),Angle(false,3));
 		clear(*data.sc);
-		int time = GetTickCount();
 		(*data.mainWorld).draw(*data.sc, 100);
-		int nextTime = GetTickCount();
-		long drawTime = nextTime - time;
 		(*data.sc).refresh();
 
 	}

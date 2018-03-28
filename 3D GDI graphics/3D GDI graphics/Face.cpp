@@ -17,3 +17,11 @@ void Face::transform(Vec3 transformationVector) {
 		verts[i].transform(transformationVector);
 	}
 }
+
+vector<Point> Face::getPointArray(int cameraId) {
+	vector<Point> points(3);
+	for (int i = 0; i <= 2; i++) { //for each vertex of the tri
+		points[i] = verts[i].getPoint(cameraId); //get the vertex we are working on from the camera's perspective
+	}
+	return points;
+}
