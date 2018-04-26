@@ -1,6 +1,10 @@
 #include "World.h"
 #include "Face.h"
 #include "Object3D.h"
+#include <cmath>
+#include <algorithm>
+#include <map>
+#include <iostream>
 
 using namespace base3D;
 
@@ -70,7 +74,7 @@ vector<Face> World::triangulate(vector<Face> faces) {
 }
 
 vector<Face> World::cullInvisible(vector<Face> faces, screen sc, int drawDist) {
-	//VISIBILITY CHECKING CODE (low processing cost check to see if the face is in the viewport
+	//VISIBILITY CHECKING CODE (low processing cost check to see if the face is in the viewport. this is in O(Pv)
 	int cameraId = activeCamera.id;
 	vector<Face> visibleFaces; //a vector that will contain all faces that can be seen by the Camera
 	for(int i = 0; i<faces.size(); i++) { //for every face
@@ -80,8 +84,10 @@ vector<Face> World::cullInvisible(vector<Face> faces, screen sc, int drawDist) {
 			if (!visible) { //if one vertex of the face has been found to be visible, at least some part of the face is visible, therefore the other points dont need to be checked
 				Point p = faces[i].verts[j].getPoint(cameraId);
 
-				if(p.coOrds[2] < drawDist) {
+				//DRAW DISTANCE CULLING AND BEHIND-CAMERA-CULLING
+				if(p.coOrds[2] < drawDist && p.coOrds[2] > 0) { //if the face is in behindt he draw distance barrier and in front of the camera. 
 
+					//FRUSTRUM CULLING
 					//find polar co-ordinate style angles for each point
 					Angle xyTheta = Angle(true, float(atan(p.coOrds[1] / p.coOrds[0]) / M_2_PI));
 					Angle xzTheta = Angle(true, float(atan(p.coOrds[2] / p.coOrds[0]) / M_2_PI));
@@ -145,6 +151,52 @@ void World::drawProcessedFaces(vector<Face> faces, screen sc) {
 	}
 }
 
+struct less_than_Face_float_pair
+{
+    inline bool operator() (const pair<Face,float>& pair1, const pair<Face,float>& pair2)
+    {
+        return (pair1.second < pair2.second);
+    }
+};
+
+vector<Face> World::sortBySize(vector<Face> faces, int cameraId, screen sc) {
+	vector<pair<Face,float>> dict;
+	for(Face f: faces) {
+		dict.push_back(pair<Face,float>(f, findFaceScreenArea(f, cameraId, sc)));
+	}	
+	sort(dict.begin(), dict.end(), less_than_Face_float_pair());
+	faces.clear();
+	for(pair<Face,float> pair : dict) {
+		faces.push_back(pair.first);
+	}
+	return faces;
+}
+
+
+
+vector<float> World::getBigness(vector<Face>* faces, screen sc) { //TESTING
+	vector<float> bigness;
+	for(int i= 0; i< (*faces).size(); i++) {
+		bigness.push_back(abs(findFaceScreenArea((*faces)[i],activeCamera.id,sc)));
+	}
+	return bigness;
+}
+
+float World::findFaceScreenArea(Face f, int cameraId, screen sc) {
+	vector<Point> screenPoints = convertToScreenPoints(f.getPointArray(cameraId), sc);
+	return findSideLength(screenPoints[0], screenPoints[1]) * findSideLength(screenPoints[1], screenPoints[2]) * sin(findInteriorAngle(screenPoints[0], screenPoints[1], screenPoints[2]).getRadsExact()); //use a*b*sin(C) to find area
+}
+
+float World::findSideLength(Point a, Point b) {
+	return abs(sqrt(pow((a.coOrds[0] - b.coOrds[0]),2) + pow((a.coOrds[1] - b.coOrds[1]),2))); //sqrt dY^2 + dX^2 - pythagoras
+}
+
+Angle World::findInteriorAngle(Point a, Point b, Point c) {
+	float angle1 = abs(atan(std::abs(b.coOrds[1] - a.coOrds[1])/abs(b.coOrds[0] - a.coOrds[0])));
+	float angle2 = abs(atan(std::abs(b.coOrds[1] - c.coOrds[1])/abs(b.coOrds[0] - c.coOrds[0])));
+	return Angle(true,(angle1+angle2)/M_PI);
+}
+
 void World::draw(screen sc, int drawDist) {
 	activeCamera.calculateDistance(sc);
 	//REMOVE ALL FACES IN SCENE FROM THEIR ASSOCIATED OBJECTS
@@ -153,8 +205,7 @@ void World::draw(screen sc, int drawDist) {
 	faces = triangulate(faces); //converts all n-gons into tris
 
 	faces = cullInvisible(faces, sc, drawDist); //removes faces outside viewing area
-
-	drawProcessedFaces(faces, sc);
-
-	sc.refresh(); //copy the working bitmap to the actual screen
+	faces = sortBySize(faces, activeCamera.id, sc);
+	drawProcessedFaces(faces, sc); //draw to the screen
+	sc.refresh(); //copy tBhe working bitmap to the actual screen
 }

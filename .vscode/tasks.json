@@ -4,10 +4,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            
-            "label": "build",
+            "options": {
+                "cwd": "${workspaceRoot}/3D GDI graphics"
+            },
+            "label": "build-debug",
             "type": "shell",
-            "command": "cd '3D GDI graphics'; msbuild",
+            "command": "msbuild",
             "args": [
                 // Ask msbuild to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
@@ -22,10 +24,12 @@
             "problemMatcher": "$msCompile"
         },
         {
-            
+            "options": {
+                "cwd": "${workspaceRoot}/3D GDI graphics"
+            },
             "label": "build-release",
             "type": "shell",
-            "command": "cd '3D GDI graphics'; msbuild",
+            "command": "msbuild",
             "args": [
                 // Ask msbuild to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
@@ -34,28 +38,30 @@
             "group": "build",
             "presentation": {
                 // Reveal the output only if unrecognized errors occur.
+                "reveal": "silent"
             },
             // Use the standard MS compiler pattern to detect errors, warnings and infos
             "problemMatcher": "$msCompile"
         },
         {
-            
+            "options": {
+                "cwd": "${workspaceRoot}/3D GDI graphics"
+            },
             "label": "build-deploy",
             "type": "shell",
-            "command": "cd '3D GDI graphics'; msbuild",
+            "command": "msbuild",
             "args": [
                 // Ask msbuild to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
-                "/property:Configuration='Deploy'"
+                "/property:Configuration='deploy'"
             ],
             "group": "build",
             "presentation": {
                 // Reveal the output only if unrecognized errors occur.
+                "reveal": "silent"
             },
             // Use the standard MS compiler pattern to detect errors, warnings and infos
             "problemMatcher": "$msCompile"
         }
     ]
 }
-
-

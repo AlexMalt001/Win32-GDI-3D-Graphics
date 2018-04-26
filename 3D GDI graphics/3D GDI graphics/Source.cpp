@@ -103,13 +103,13 @@ void clear(screen& sc) {
 DWORD WINAPI mythread(__in LPVOID lpParameter) {
 	MYDATA data = *((MYDATA*)lpParameter);
 	while(true) {
-		Sleep(100);
+		Sleep(0);
 		(*data.sc).clear();
-		(*data.mainWorld).objects[0].rotate(Point(0,0,0), Angle(false, 0), Angle(false, 0),Angle(false,3));
+		(*data.mainWorld).objects[0].rotate(Point(0,0,0), Angle(false, -1), Angle(false, -1),Angle(false,-1));
 		clear(*data.sc);
-		(*data.mainWorld).draw(*data.sc, 100);
+		(*data.mainWorld).draw(*data.sc, 500);
 		(*data.sc).refresh();
-
+		
 	}
 	return 0;
 }

@@ -21,8 +21,16 @@ namespace base3D {
 		vector<Face> seperateFaces();
 		vector<Face> triangulate(vector<Face> faces);
 		vector<Face> cullInvisible(vector<Face> faces, screen sc, int drawDist);
-		void drawProcessedFaces(vector<Face> faces, screen sc);
 		vector<Point> convertToScreenPoints(vector<Point> facePoints, screen sc);
+		void drawProcessedFaces(vector<Face> faces, screen sc);
+		float findFaceScreenArea(Face f, int cameraId, screen sc);
+		float findSideLength(Point a, Point b);
+		Angle findInteriorAngle(Point a, Point b, Point c);
+		vector<Face> sortBySize(vector<Face> faces, int cameraId, screen sc);
+
+
+		//TESTING
+		vector<float> getBigness(vector<Face>* faces, screen sc);
 	};
 }
 

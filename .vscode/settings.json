@@ -8,6 +8,14 @@
         "vector": "cpp",
         "xstring": "cpp",
         "xutility": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "streambuf": "cpp",
+        "xmemory0": "cpp",
+        "xtree": "cpp",
+        "map": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp",
+        "algorithm": "cpp",
+        "limits": "cpp"
     }
 }
